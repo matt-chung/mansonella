@@ -12,13 +12,16 @@
   - [Extract reads that mapped to the Mansonella ozzadi mitochondria reference](#extract-reads-that-mapped-to-the-mansonella-ozzadi-mitochondria-reference)
   - [Align MinION reads from each strain to Mansonella ozzadi mitochondria](#align-minion-reads-from-each-strain-to-mansonella-ozzadi-mitochondria)
   - [Assemble Mansonella mitochondrial genome with Unicycler](#assemble-mansonella-mitochondrial-genome-with-unicycler)
-    - [Assemble T7_2 and T-8 using long read FASTQ and subset short read FASTQs](#assemble-t7_2-and-t-8-using-long-read-fastq-and-subset-short-read-fastqs)
+    - [Assemble T7_2 and T8 using long read FASTQ and subset short read FASTQs](#assemble-t7_2-and-t8-using-long-read-fastq-and-subset-short-read-fastqs)
     - [Assemble T6 using subset short read FASTQs](#assemble-t6-using-subset-short-read-fastqs)
   - [Create contig files for NOVOPlasty assembly](#create-contig-files-for-novoplasty-assembly)
   - [Assemble Mansonella mitochondrial genome using short read FASTQs with NOVOPlasty](#assemble-mansonella-mitochondrial-genome-using-short-read-fastqs-with-novoplasty)
   - [Compare Unicycler and NOVOPlasty mitochondria assemblies](#compare-unicycler-and-novoplasty-mitochondria-assemblies)
   - [Check if NOVOPlasty can assemble a complete Mansonella mitochondria without a reference sequence input](#check-if-novoplasty-can-assemble-a-complete-mansonella-mitochondria-without-a-reference-sequence-input)
   - [Compare the T6 and T8 mitochondria assemblies from NOVOPlasty](#compare-the-t6-and-t8-mitochondria-assemblies-from-novoplasty)
+  - [Confirm the 8.5 kb position deletion in the T6 and T8 assemblies](#confirm-the-85-kb-position-deletion-in-the-t6-and-t8-assemblies)
+    - [Align sequencing reads to the NOVOPlasty T6 and T8 mitochondrial assemblies](#align-sequencing-reads-to-the-novoplasty-t6-and-t8-mitochondrial-assemblies)
+    - [Sort and index BAM files](#sort-and-index-bam-files)
 
 <!-- /MarkdownTOC -->
 
@@ -142,7 +145,7 @@ BAM=/local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/T8.map1.bam
 
 ## Assemble Mansonella mitochondrial genome with Unicycler
 
-### Assemble T7_2 and T-8 using long read FASTQ and subset short read FASTQs
+### Assemble T7_2 and T8 using long read FASTQ and subset short read FASTQs
 
 T6 was never sequenced on the MinION
 
@@ -552,6 +555,8 @@ Only one circularized assembly was recovered from T8. There are four options (in
 >Contig 01+02+04  
 >Contig 01+03+05  
 
+Both assemblies look like they have a deletion at around 8.5 kb relative to the reference.
+
 ##### Inputs:
 ```{bash, eval = F}
 REF_FNA=/local/projects-t3/EBMAL/mchung_dir/mansonella/references/KX822021.1.fna
@@ -583,3 +588,51 @@ NOVOPlasty T8 assembly v. NOVOPlasty T6 assembly:
 "$MUMMER_BIN_DIR"/mummerplot --layout --png "$WORKING_DIR"/nucmer/novoT8_v_novoT6.delta --prefix "$WORKING_DIR"/nucmer/novoT8_v_novoT6
 ```
 ![image](/images/novoT8_v_novoT6.png)
+
+## Confirm the 8.5 kb position deletion in the T6 and T8 assemblies
+
+Option 2 from the T6 NOVOPlasty assembly contains the Contig 1+2+5 merge.
+
+### Align sequencing reads to the NOVOPlasty T6 and T8 mitochondrial assemblies
+
+##### Input Sets:
+```{bash, eval = F}
+SEED_LENGTH=23
+THREADS=16
+
+## T6
+OUTPUT_PREFIX=T6_delconfirm
+REF_FNA=/local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/novoplasty/assembly1/T6/Option_2_T6.fasta
+FASTQ1=/local/projects/EMANS/T6/ILLUMINA_DATA/EMANS_20181012_K00134_IL100106386_S1_L001_R1_trimmed.fastq.gz
+FASTQ2=/local/projects/EMANS/T6/ILLUMINA_DATA/EMANS_20181012_K00134_IL100106386_S1_L001_R2_trimmed.fastq.gz
+
+## T8
+OUTPUT_PREFIX=T8_delconfirm
+REF_FNA=/local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/novoplasty/assembly1/T8/Circularized_assembly_1_T8.fasta
+FASTQ1=/local/projects/EMANS/T8/ILLUMINA_DATA/EMANS_20180815_K00134_IL100106041_S21_L005_R1_trimmed.fastq.gz
+FASTQ2=/local/projects/EMANS/T8/ILLUMINA_DATA/EMANS_20180815_K00134_IL100106041_S21_L005_R2_trimmed.fastq.gz
+```
+
+##### Commands:
+```{bash, eval = F}
+"$BWA_BIN_DIR"/bwa index "$REF_FNA"
+echo -e ""$BWA_BIN_DIR"/bwa mem -t "$THREADS" -k "$SEED_LENGTH" "$REF_FNA" "$FASTQ1" "$FASTQ2" | "$SAMTOOLS_BIN_DIR"/samtools view -bho "$WORKING_DIR"/delconfirm/"$OUTPUT_PREFIX".bam -" | qsub -q threaded.q  -pe thread "$THREADS" -P jdhotopp-lab -l mem_free=5G -N bwa -wd "$WORKING_DIR"/delconfirm/
+```
+
+### Sort and index BAM files
+##### Input Sets:
+```{bash, eval = F}
+THREADS=4
+
+## T6
+BAM=/local/projects-t3/EBMAL/mchung_dir/mansonella/delconfirm/T6_delconfirm.bam
+
+## T8
+BAM=/local/projects-t3/EBMAL/mchung_dir/mansonella/delconfirm/T8_delconfirm.bam
+```
+
+##### Commands:
+```{bash, eval = F}
+"$SAMTOOLS_BIN_DIR"/samtools sort -@ "$THREADS" -o "$(echo "$BAM" | sed "s/[.]bam$/.sortedbyposition.bam/g")" "$BAM"
+"$SAMTOOLS_BIN_DIR"/samtools index -@ "$THREADS" "$(echo "$BAM" | sed "s/[.]bam$/.sortedbyposition.bam/g")"
+```

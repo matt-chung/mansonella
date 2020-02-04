@@ -3,19 +3,22 @@
 <!-- MarkdownTOC levels="1,2,3,4" -->
 
 - [Set software and directory paths](#set-software-and-directory-paths)
-	- [Software](#software)
-	- [Directories](#directories)
-	- [Create directories](#create-directories)
+  - [Software](#software)
+  - [Directories](#directories)
+  - [Create directories](#create-directories)
 - [Assemble mitochondrial genome of Mansonella using 3 different strains](#assemble-mitochondrial-genome-of-mansonella-using-3-different-strains)
-	- [Download Mansonella ozzardi mitochondra reference](#download-mansonella-ozzardi-mitochondra-reference)
-	- [Align Illumina reads from each strain to Mansonella ozzadi mitochondria using BWA MEM](#align-illumina-reads-from-each-strain-to-mansonella-ozzadi-mitochondria-using-bwa-mem)
-	- [Extract reads that mapped to the Mansonella ozzadi mitochondria reference](#extract-reads-that-mapped-to-the-mansonella-ozzadi-mitochondria-reference)
-	- [Align MinION reads from each strain to Mansonella ozzadi mitochondria](#align-minion-reads-from-each-strain-to-mansonella-ozzadi-mitochondria)
-	- [Assemble Mansonella mitochondrial genome with Unicycler](#assemble-mansonella-mitochondrial-genome-with-unicycler)
-		- [Assemble T7_2 and T-8 using long read FASTQ and subset short read FASTQs](#assemble-t7_2-and-t-8-using-long-read-fastq-and-subset-short-read-fastqs)
-		- [Assemble T6 using subset short read FASTQs](#assemble-t6-using-subset-short-read-fastqs)
-	- [Create contig files for NOVOPlasty assembly](#create-contig-files-for-novoplasty-assembly)
-	- [Assemble Mansonella mitochondrial genome using short read FASTQs with NOVOplasty](#assemble-mansonella-mitochondrial-genome-using-short-read-fastqs-with-novoplasty)
+  - [Download Mansonella ozzardi mitochondra reference](#download-mansonella-ozzardi-mitochondra-reference)
+  - [Align Illumina reads from each strain to Mansonella ozzadi mitochondria using BWA MEM](#align-illumina-reads-from-each-strain-to-mansonella-ozzadi-mitochondria-using-bwa-mem)
+  - [Extract reads that mapped to the Mansonella ozzadi mitochondria reference](#extract-reads-that-mapped-to-the-mansonella-ozzadi-mitochondria-reference)
+  - [Align MinION reads from each strain to Mansonella ozzadi mitochondria](#align-minion-reads-from-each-strain-to-mansonella-ozzadi-mitochondria)
+  - [Assemble Mansonella mitochondrial genome with Unicycler](#assemble-mansonella-mitochondrial-genome-with-unicycler)
+    - [Assemble T7_2 and T-8 using long read FASTQ and subset short read FASTQs](#assemble-t7_2-and-t-8-using-long-read-fastq-and-subset-short-read-fastqs)
+    - [Assemble T6 using subset short read FASTQs](#assemble-t6-using-subset-short-read-fastqs)
+  - [Create contig files for NOVOPlasty assembly](#create-contig-files-for-novoplasty-assembly)
+  - [Assemble Mansonella mitochondrial genome using short read FASTQs with NOVOPlasty](#assemble-mansonella-mitochondrial-genome-using-short-read-fastqs-with-novoplasty)
+  - [Compare Unicycler and NOVOPlasty mitochondria assemblies](#compare-unicycler-and-novoplasty-mitochondria-assemblies)
+  - [Check if NOVOPlasty can assemble a complete Mansonella mitochondria without a reference sequence input](#check-if-novoplasty-can-assemble-a-complete-mansonella-mitochondria-without-a-reference-sequence-input)
+  - [Compare the T6 and T8 mitochondria assemblies from NOVOPlasty](#compare-the-t6-and-t8-mitochondria-assemblies-from-novoplasty)
 
 <!-- /MarkdownTOC -->
 
@@ -31,31 +34,12 @@ PERL_BIN_DIR=/usr/local/packages/perl-5.24.0/bin
 PYTHON_LIB_DIR=/usr/local/packages/python-3.5.2/lib
 
 BWA_BIN_DIR=/usr/local/packages/bwa-0.7.17/bin
+MUMMER_BIN_DIR=/usr/local/packages/mummer-3.23
 NOVOPLASTY_BIN_DIR=/local/aberdeen2rw/julie/Matt_dir/packages/NOVOPlasty_v3.8.1
 PILON_BIN_DIR=/usr/local/packages/pilon-1.22
 SAMTOOLS_BIN_DIR=/usr/local/packages/samtools-1.9/bin
 SEQTK_BIN_DIR=/usr/local/packages/seqtk-1.2/bin
 UNICYCLER_BIN_DIR=/usr/local/packages/python-3.5.2/bin
-
-
-
-
-JULIA_BIN_DIR=/usr/local/bin
-JULIA_LIB_DIR=/home/mattchung/.julia
-PYTHON_BIN_DIR=/usr/local/packages/python-3.5.2/bin
-PYTHON_LIB_DIR=/usr/local/packages/python-3.5.2/lib
-
-BBTOOLS_BIN_DIR=/usr/local/packages/bbtools-38.47
-DOS2UNIX_BIN_DIR=/usr/bin
-SEQTK_BIN_DIR=/usr/local/packages/seqtk-1.2/bin
-
-EXPRESS_BIN_DIR=/local/aberdeen2rw/julie/Matt_dir/packages/express-1.5.1
-FADU_BIN_DIR=/local/aberdeen2rw/julie/Matt_dir/packages/FADU
-HISAT2_BIN_DIR=/usr/local/packages/hisat2-2.1.0
-KALLISTO_BIN_DIR=/local/aberdeen2rw/julie/Matt_dir/packages/kallisto_v0.46.1
-SALMON_BIN_DIR=/local/aberdeen2rw/julie/Matt_dir/packages/salmon_v1.1.0/bin
-SRATOOLKIT_BIN_DIR=/usr/local/packages/sratoolkit-2.9.0/bin
-SUBREAD_BIN_DIR=/usr/local/packages/subread-1.6.4/bin
 ```
 
 ## Directories
@@ -76,6 +60,8 @@ mkdir -p "$WORKING_DIR"/assemblies/unicycler/assembly1/T8
 mkdir -p "$WORKING_DIR"/assemblies/novoplasty/assembly1/T6
 mkdir -p "$WORKING_DIR"/assemblies/novoplasty/assembly1/T7_2
 mkdir -p "$WORKING_DIR"/assemblies/novoplasty/assembly1/T8
+
+mkdir -p "$WORKING_DIR"/nucmer/
 ```
 
 # Assemble mitochondrial genome of Mansonella using 3 different strains
@@ -164,10 +150,9 @@ T6 was never sequenced on the MinION
 ```{bash, eval = F}
 THREADS=16
 
-
 ## T7_2
 OUTPUT_PREFIX=T7_2
-LONG_FASTQ=
+LONG_FASTQ=/local/aberdeen2rw/julie/ben/20180731/20180731.fastq
 SHORT_FASTQ1=/local/projects/EMANS/T7_2/ILLUMINA_DATA/EMANS_20181012_K00134_IL100106387_S2_L001_R1_trimmed.fastq.gz
 SHORT_FASTQ2=/local/projects/EMANS/T7_2/ILLUMINA_DATA/EMANS_20181012_K00134_IL100106387_S2_L001_R2_trimmed.fastq.gz
 OUTPUT_DIR="$WORKING_DIR"/assemblies/unicycler/assembly1/T7_2
@@ -506,7 +491,7 @@ Use Quality Scores   = It will take in account the quality scores, only use this
 
 ```
 
-## Assemble Mansonella mitochondrial genome using short read FASTQs with NOVOplasty
+## Assemble Mansonella mitochondrial genome using short read FASTQs with NOVOPlasty
 
 ##### Input Sets:
 ```{bash, eval = F}
@@ -521,8 +506,80 @@ OUTPUT_DIR="$WORKING_DIR"/assemblies/novoplasty/assembly1/T7_2/
 ## T8
 CONFIG="$WORKING_DIR"/assemblies/novoplasty/assembly1/T8/config.txt
 OUTPUT_DIR="$WORKING_DIR"/assemblies/novoplasty/assembly1/T8/
-```
+``` 
 
+##### Commands: 
 ```{bash, eval = F}
 echo -e ""$PERL_BIN_DIR"/perl "$NOVOPLASTY_BIN_DIR"/NOVOPlasty3.8.1.pl -c "$CONFIG"" | qsub -P jdhotopp-lab -l mem_free=5G -N novoplasty -wd "$OUTPUT_DIR"
 ```
+
+## Compare Unicycler and NOVOPlasty mitochondria assemblies
+
+##### Input Sets:
+```{bash, eval = F}
+REF_FNA=/local/projects-t3/EBMAL/mchung_dir/mansonella/references/KX822021.1.fna
+
+## T8
+OUTPUT_PREFIX=T8
+UNICYCLER_ASSEMBLY_FNA=/local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/unicycler/assembly1/T8/spades_assembly/assembly/scaffolds.fasta
+``` 
+
+```{bash, eval = F}
+"$MUMMER_BIN_DIR"/nucmer "$REF_FNA" "$UNICYCLER_ASSEMBLY_FNA" -p "$WORKING_DIR"/nucmer/"$OUTPUT_PREFIX"_unicycler
+
+```
+
+## Check if NOVOPlasty can assemble a complete Mansonella mitochondria without a reference sequence input
+
+##### Inputs:
+```{bash, eval = F}
+## T8
+CONFIG="$WORKING_DIR"/assemblies/novoplasty/assembly1/T8_noref/config_noref.txt
+OUTPUT_DIR="$WORKING_DIR"/assemblies/novoplasty/assembly1/T8_noref/
+```
+
+##### Commands: 
+```{bash, eval = F}
+echo -e ""$PERL_BIN_DIR"/perl "$NOVOPLASTY_BIN_DIR"/NOVOPlasty3.8.1.pl -c "$CONFIG"" | qsub -P jdhotopp-lab -l mem_free=5G -N novoplasty -wd "$OUTPUT_DIR"
+```
+
+## Compare the T6 and T8 mitochondria assemblies from NOVOPlasty
+
+Only one circularized assembly was recovered from T8. There are four options (involving different combinations of four contigs) for T6:  
+
+>Contig 01+03+04  
+>Contig 01+02+05  
+>Contig 01+02+04  
+>Contig 01+03+05  
+
+##### Inputs:
+```{bash, eval = F}
+REF_FNA=/local/projects-t3/EBMAL/mchung_dir/mansonella/references/KX822021.1.fna
+T6_NOVOPLASTY_FNA=/local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/novoplasty/assembly1/T6/Contigs_1_T6.fasta
+T8_NOVOPLASTY_FNA=/local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/novoplasty/assembly1/T8/Circularized_assembly_1_T8.fasta
+```
+
+##### Commands: 
+```{bash, eval = F}
+"$MUMMER_BIN_DIR"/nucmer "$REF_FNA" "$T6_NOVOPLASTY_FNA" -p "$WORKING_DIR"/nucmer/ref_v_novoT6
+"$MUMMER_BIN_DIR"/nucmer "$REF_FNA" "$T8_NOVOPLASTY_FNA" -p "$WORKING_DIR"/nucmer/ref_v_novoT8
+"$MUMMER_BIN_DIR"/nucmer "$T8_NOVOPLASTY_FNA" "$T6_NOVOPLASTY_FNA" -p "$WORKING_DIR"/nucmer/novoT8_v_novoT6
+```
+
+Reference v. NOVOPlasty T6 assembly:
+```{bash, eval = F}
+"$MUMMER_BIN_DIR"/mummerplot --layout --png "$WORKING_DIR"/nucmer/ref_v_novoT6.delta --prefix "$WORKING_DIR"/nucmer/ref_v_novoT6
+```
+![image](/images/ref_v_novoT6.png)
+
+Reference v. NOVOPlasty T8 assembly:
+```{bash, eval = F}
+"$MUMMER_BIN_DIR"/mummerplot --layout --png "$WORKING_DIR"/nucmer/ref_v_novoT8.delta --prefix "$WORKING_DIR"/nucmer/ref_v_novoT8
+```
+![image](/images/ref_v_novoT8.png)
+
+NOVOPlasty T8 assembly v. NOVOPlasty T6 assembly:
+```{bash, eval = F}
+"$MUMMER_BIN_DIR"/mummerplot --layout --png "$WORKING_DIR"/nucmer/novoT8_v_novoT6.delta --prefix "$WORKING_DIR"/nucmer/novoT8_v_novoT6
+```
+![image](/images/novoT8_v_novoT6.png)

@@ -10,17 +10,20 @@
   - [Download Mansonella ozzardi mitochondra reference](#download-mansonella-ozzardi-mitochondra-reference)
   - [Assemble Mansonella mitochondrial genome with Unicycler](#assemble-mansonella-mitochondrial-genome-with-unicycler)
     - [Assemble T7_2 and T8 using long read FASTQ and subset short read FASTQs](#assemble-t7_2-and-t8-using-long-read-fastq-and-subset-short-read-fastqs)
-    - [Assemble T6 using subset short read FASTQs](#assemble-t6-using-subset-short-read-fastqs)
+    - [Assemble T6 and P359_3 using subset short read FASTQs](#assemble-t6-and-p359_3-using-subset-short-read-fastqs)
   - [Assemble Mansonella mitochondrial genome with NOVOPlasty](#assemble-mansonella-mitochondrial-genome-with-novoplasty)
     - [Create contig files for NOVOPlasty assembly](#create-contig-files-for-novoplasty-assembly)
     - [Assemble Mansonella mitochondrial genome using short read FASTQs with NOVOPlasty](#assemble-mansonella-mitochondrial-genome-using-short-read-fastqs-with-novoplasty)
     - [Check if NOVOPlasty can assemble a complete Mansonella mitochondria without a reference sequence input](#check-if-novoplasty-can-assemble-a-complete-mansonella-mitochondria-without-a-reference-sequence-input)
     - [Compare the T6 and T8 mitochondria assemblies from NOVOPlasty](#compare-the-t6-and-t8-mitochondria-assemblies-from-novoplasty)
+  - [Look at the 8.5 kb position deletion in the T6 and T8 assemblies](#look-at-the-85-kb-position-deletion-in-the-t6-and-t8-assemblies)
+    - [Align Illumina reads from each strain to Mansonella ozzadi mitochondria using BWA MEM](#align-illumina-reads-from-each-strain-to-mansonella-ozzadi-mitochondria-using-bwa-mem)
+    - [Sort and index BAM files](#sort-and-index-bam-files)
   - [Compare Unicycler and NOVOPlasty mitochondria assemblies](#compare-unicycler-and-novoplasty-mitochondria-assemblies)
   - [Confirm the 8.5 kb position deletion in the T6 and T8 assemblies](#confirm-the-85-kb-position-deletion-in-the-t6-and-t8-assemblies)
     - [Align sequencing reads to the NOVOPlasty T6 and T8 mitochondrial assemblies](#align-sequencing-reads-to-the-novoplasty-t6-and-t8-mitochondrial-assemblies)
-    - [Sort and index BAM files](#sort-and-index-bam-files)
-  - [Align Illumina reads from each strain to Mansonella ozzadi mitochondria using BWA MEM](#align-illumina-reads-from-each-strain-to-mansonella-ozzadi-mitochondria-using-bwa-mem)
+    - [Sort and index BAM files](#sort-and-index-bam-files-1)
+  - [Align Illumina reads from each strain to Mansonella ozzadi mitochondria using BWA MEM](#align-illumina-reads-from-each-strain-to-mansonella-ozzadi-mitochondria-using-bwa-mem-1)
   - [Extract reads that mapped to the Mansonella ozzadi mitochondria reference](#extract-reads-that-mapped-to-the-mansonella-ozzadi-mitochondria-reference)
 
 <!-- /MarkdownTOC -->
@@ -85,7 +88,7 @@ wget
 
 ### Assemble T7_2 and T8 using long read FASTQ and subset short read FASTQs
 
-T6 was never sequenced on the MinION
+T6 and P359_3 were never sequenced on the MinION.
 
 ##### Inputs:
 ```{bash, eval = F}
@@ -111,7 +114,7 @@ OUTPUT_DIR="$WORKING_DIR"/assemblies/unicycler/assembly1/T8
 echo -e "export LD_LIBRARY_PATH="$PYTHON_LIB_DIR":"$LD_LIBRARY_PATH"\n"$UNICYCLER_BIN_DIR"/unicycler --mode normal --long "$LONG_FASTQ" --short1 "$SHORT_FASTQ1" --short2 "$SHORT_FASTQ2" -o "$OUTPUT_DIR" --pilon_path "$PILON_BIN_DIR"/pilon-1.22.jar -t "$THREADS"" | qsub -P jdhotopp-lab -N unicycler -wd "$OUTPUT_DIR" -q threaded.q -pe thread "$THREADS" -l mem_free=5G
 ```
 
-### Assemble T6 using subset short read FASTQs
+### Assemble T6 and P359_3 using subset short read FASTQs
 ##### Inputs:
 ```{bash, eval = F}
 THREADS=16
@@ -121,6 +124,12 @@ OUTPUT_PREFIX=T6
 SHORT_FASTQ1=/local/projects/EMANS/T6/ILLUMINA_DATA/EMANS_20181012_K00134_IL100106386_S1_L001_R1_trimmed.fastq.gz
 SHORT_FASTQ2=/local/projects/EMANS/T6/ILLUMINA_DATA/EMANS_20181012_K00134_IL100106386_S1_L001_R2_trimmed.fastq.gz
 OUTPUT_DIR="$WORKING_DIR"/assemblies/unicycler/assembly1/T6
+
+## P359_3
+OUTPUT_PREFIX=P359_3
+SHORT_FASTQ1=/local/projects-t4/EMANS/P359_3_Manonella_Lib/ILLUMINA_DATA/EMANS_20180308_K00134_IL100099612_S5_L004_R1_trimmed.fastq.gz
+SHORT_FASTQ2=/local/projects-t4/EMANS/P359_3_Manonella_Lib/ILLUMINA_DATA/EMANS_20180308_K00134_IL100099612_S5_L004_R2_trimmed.fastq.gz
+OUTPUT_DIR="$WORKING_DIR"/assemblies/unicycler/assembly1/P359_3
 ```
 
 ##### Commands:
@@ -458,8 +467,8 @@ Insert size           = 300
 Platform              = illumina
 Single/Paired         = PE
 Combined reads        =
-Forward reads         = /local/projects/EMANS/P359_3_Manonella_Lib/ILLUMINA_DATA/EMANS_20180308_K00134_IL100099612_S5_L004_R1_trimmed.fastq.gz
-Reverse reads         = /local/projects/EMANS/P359_3_Manonella_Lib/ILLUMINA_DATA/EMANS_20180308_K00134_IL100099612_S5_L004_R2_trimmed.fastq.gz
+Forward reads         = /local/projects-t4/EMANS/P359_3_Manonella_Lib/ILLUMINA_DATA/EMANS_20180308_K00134_IL100099612_S5_L004_R1_trimmed.fastq.gz
+Reverse reads         = /local/projects-t4/EMANS/P359_3_Manonella_Lib/ILLUMINA_DATA/EMANS_20180308_K00134_IL100099612_S5_L004_R2_trimmed.fastq.gz
 
 Heteroplasmy:
 -----------------------
@@ -565,6 +574,7 @@ echo -e ""$PERL_BIN_DIR"/perl "$NOVOPLASTY_BIN_DIR"/NOVOPlasty3.8.1.pl -c "$CONF
 
 ### Check if NOVOPlasty can assemble a complete Mansonella mitochondria without a reference sequence input
 
+The assemblies differ by one ambigious base pair position.
 ##### Inputs:
 ```{bash, eval = F}
 ## T8
@@ -575,6 +585,34 @@ OUTPUT_DIR="$WORKING_DIR"/assemblies/novoplasty/assembly1/T8_noref/
 ##### Commands: 
 ```{bash, eval = F}
 echo -e ""$PERL_BIN_DIR"/perl "$NOVOPLASTY_BIN_DIR"/NOVOPlasty3.8.1.pl -c "$CONFIG"" | qsub -P jdhotopp-lab -l mem_free=5G -N novoplasty -wd "$OUTPUT_DIR"
+```
+
+No reference assembly stats:
+```{bash, eval = F}
+/home/jdhotopp/bin/residues.pl /local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/novoplasty/assembly1/T8_noref/Circularized_assembly_1_T8.fasta
+```
+```{bash, eval = F}
+Contig1 13621   13621   perG+C:25.8     T:7193  C:995   G:2520  A:2857  other:56
+```
+
+With reference assembly stats:
+```{bash, eval = F}
+/home/jdhotopp/bin/residues.pl /local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/novoplasty/assembly1/T8/Circularized_assembly_1_T8.fasta
+```
+```{bash, eval = F}
+Contig1 13622   13622   perG+C:25.8     T:7193  C:995   G:2520  A:2857  other:57
+```
+```{bash, eval = F}
+tail -n1  /local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/novoplasty/assembly1/T8/Circularized_assembly_1_T8.fasta
+```
+```{bash, eval = F}
+AATTTTTTTATTTTATTAATGTTTTTTTGTTTTTTATATTTTTTGTTGTTTTTTTTTTTTT*GTTATGGTTAATTTTGTAATCATTTTATAATTTTTACTTTAGTAAAATTTGTTTTTGTGG
+```
+```{bash, eval = F}
+tail -n1  /local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/novoplasty/assembly1/T8_noref/Circularized_assembly_1_T8.fasta
+```
+```{bash, eval = F}
+AATTTTTTTATTTTATTAATGTTTTTTTGTTTTTTATATTTTTTGTTGTTTTTTTTTTTTTGTTATGGTTAATTTTGTAATCATTTTATAATTTTTACTTTAGTAAAATTTGTTTTTGTGG
 ```
 
 ### Compare the T6 and T8 mitochondria assemblies from NOVOPlasty
@@ -619,6 +657,51 @@ NOVOPlasty T8 assembly v. NOVOPlasty T6 assembly:
 "$MUMMER_BIN_DIR"/mummerplot --layout --png "$WORKING_DIR"/nucmer/novoT8_v_novoT6.delta --prefix "$WORKING_DIR"/nucmer/novoT8_v_novoT6
 ```
 ![image](/images/novoT8_v_novoT6.png)
+
+## Look at the 8.5 kb position deletion in the T6 and T8 assemblies
+
+### Align Illumina reads from each strain to Mansonella ozzadi mitochondria using BWA MEM
+
+##### Input Sets:
+```{bash, eval = F}
+REF_FNA=/local/projects-t3/EBMAL/mchung_dir/mansonella/references/KX822021.1.fna
+SEED_LENGTH=23
+THREADS=16
+
+## T6
+OUTPUT_PREFIX=T6
+FASTQ1=/local/projects/EMANS/T6/ILLUMINA_DATA/EMANS_20181012_K00134_IL100106386_S1_L001_R1_trimmed.fastq.gz
+FASTQ2=/local/projects/EMANS/T6/ILLUMINA_DATA/EMANS_20181012_K00134_IL100106386_S1_L001_R2_trimmed.fastq.gz
+
+## T8
+OUTPUT_PREFIX=T8
+FASTQ1=/local/projects/EMANS/T8/ILLUMINA_DATA/EMANS_20180815_K00134_IL100106041_S21_L005_R1_trimmed.fastq.gz
+FASTQ2=/local/projects/EMANS/T8/ILLUMINA_DATA/EMANS_20180815_K00134_IL100106041_S21_L005_R2_trimmed.fastq.gz
+```
+
+##### Commands:
+```{bash, eval = F}
+"$BWA_BIN_DIR"/bwa index "$REF_FNA"
+echo -e ""$BWA_BIN_DIR"/bwa mem -t "$THREADS" -k "$SEED_LENGTH" "$REF_FNA" "$FASTQ1" "$FASTQ2" | "$SAMTOOLS_BIN_DIR"/samtools view -bho "$WORKING_DIR"/assemblies/"$OUTPUT_PREFIX".map1.bam -" | qsub -q threaded.q  -pe thread "$THREADS" -P jdhotopp-lab -l mem_free=5G -N bwa -wd "$WORKING_DIR"/assemblies/
+```
+
+### Sort and index BAM files
+##### Input Sets:
+```{bash, eval = F}
+THREADS=4
+
+## T6
+BAM=/local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/T6.map1.bam
+
+## T8
+BAM=/local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/T8.map1.bam
+```
+
+##### Commands:
+```{bash, eval = F}
+"$SAMTOOLS_BIN_DIR"/samtools sort -@ "$THREADS" -o "$(echo "$BAM" | sed "s/[.]bam$/.sortedbyposition.bam/g")" "$BAM"
+"$SAMTOOLS_BIN_DIR"/samtools index -@ "$THREADS" "$(echo "$BAM" | sed "s/[.]bam$/.sortedbyposition.bam/g")"
+```
 
 ## Compare Unicycler and NOVOPlasty mitochondria assemblies
 
@@ -683,6 +766,8 @@ BAM=/local/projects-t3/EBMAL/mchung_dir/mansonella/delconfirm/T8_delconfirm.bam
 "$SAMTOOLS_BIN_DIR"/samtools sort -@ "$THREADS" -o "$(echo "$BAM" | sed "s/[.]bam$/.sortedbyposition.bam/g")" "$BAM"
 "$SAMTOOLS_BIN_DIR"/samtools index -@ "$THREADS" "$(echo "$BAM" | sed "s/[.]bam$/.sortedbyposition.bam/g")"
 ```
+
+#############
 
 ## Align Illumina reads from each strain to Mansonella ozzadi mitochondria using BWA MEM
 

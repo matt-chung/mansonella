@@ -16,11 +16,18 @@
     - [Create contig files for NOVOPlasty assembly](#create-contig-files-for-novoplasty-assembly)
     - [Assemble Mansonella mitochondrial genome using short read FASTQs with NOVOPlasty](#assemble-mansonella-mitochondrial-genome-using-short-read-fastqs-with-novoplasty)
     - [Check if NOVOPlasty can assemble a complete Mansonella mitochondria without a reference sequence input](#check-if-novoplasty-can-assemble-a-complete-mansonella-mitochondria-without-a-reference-sequence-input)
-    - [Compare the T6 and T8 mitochondria assemblies from NOVOPlasty](#compare-the-t6-and-t8-mitochondria-assemblies-from-novoplasty)
+    - [Identify proper T6 mitochondria assembly](#identify-proper-t6-mitochondria-assembly)
     - [Rotate assemblies to the M. ozzardi mitochondria](#rotate-assemblies-to-the-m-ozzardi-mitochondria)
       - [Rotate T6](#rotate-t6)
       - [Rotate T8](#rotate-t8)
-  - [Look at the 8.5 kb position deletion in the T6 and T8 assemblies](#look-at-the-85-kb-position-deletion-in-the-t6-and-t8-assemblies)
+- [Compare the T6 and T8 mitochondria assemblies from NOVOPlasty](#compare-the-t6-and-t8-mitochondria-assemblies-from-novoplasty)
+  - [Compare sequence identity between the three mitogenomes using BLASTN](#compare-sequence-identity-between-the-three-mitogenomes-using-blastn)
+  - [Annotate the M. ozzardi mitogenome and the T6, T8 NOVOPlasty assemblies](#annotate-the-m-ozzardi-mitogenome-and-the-t6-t8-novoplasty-assemblies)
+    - [Use GeSeq to annotate the mitogenomes](#use-geseq-to-annotate-the-mitogenomes)
+  - [Visualize synteny between the three mitogenomes using ACT](#visualize-synteny-between-the-three-mitogenomes-using-act)
+    - [Create coords file readable in ACT](#create-coords-file-readable-in-act)
+    - [Set GenBank and links file for ACT](#set-genbank-and-links-file-for-act)
+  - [Look at the 8.5 kb position deletion in the T8 assemblies](#look-at-the-85-kb-position-deletion-in-the-t8-assemblies)
     - [Align Illumina reads from each strain to Mansonella ozzadi mitochondria using BWA MEM](#align-illumina-reads-from-each-strain-to-mansonella-ozzadi-mitochondria-using-bwa-mem)
     - [Sort and index BAM files](#sort-and-index-bam-files)
   - [Compare Unicycler and NOVOPlasty mitochondria assemblies](#compare-unicycler-and-novoplasty-mitochondria-assemblies)
@@ -120,6 +127,9 @@ echo -e "export LD_LIBRARY_PATH="$PYTHON_LIB_DIR":"$LD_LIBRARY_PATH"\n"$UNICYCLE
 ```
 
 ### Assemble T6 and P359_3 using subset short read FASTQs
+
+P359_3 was unable to assemble due to SPAdes having insufficient memory.
+
 ##### Inputs:
 ```{bash, eval = F}
 THREADS=16
@@ -147,16 +157,24 @@ T7_2_UNICYCLER_FNA=/local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/uni
 T8_UNICYCLER_FNA=/local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/unicycler/assembly1/T8/assembly.fasta
 ```
 
+##### Commands:
+```{bash, eval = F}
+echo -e "export LD_LIBRARY_PATH="$PYTHON_LIB_DIR":"$LD_LIBRARY_PATH"\n"$UNICYCLER_BIN_DIR"/unicycler --mode normal --short1 "$SHORT_FASTQ1" --short2 "$SHORT_FASTQ2" -o "$OUTPUT_DIR" --pilon_path "$PILON_BIN_DIR"/pilon-1.22.jar -t "$THREADS"" | qsub -P jdhotopp-lab -N unicycler -wd "$OUTPUT_DIR" -q threaded.q -pe thread "$THREADS" -l mem_free=5G
+```
+
 ```{bash, eval = F}
 "$MUMMER_BIN_DIR"/nucmer "$REF_FNA" "$T6_UNICYCLER_FNA" -p "$WORKING_DIR"/nucmer/ref_v_uniT6
 "$MUMMER_BIN_DIR"/nucmer "$REF_FNA" "$T7_2_UNICYCLER_FNA" -p "$WORKING_DIR"/nucmer/ref_v_uniT7_2
 "$MUMMER_BIN_DIR"/nucmer "$REF_FNA" "$T8_UNICYCLER_FNA" -p "$WORKING_DIR"/nucmer/ref_v_uniT8
 ```
+
 Reference v. Unicycler T6 assembly:
 ```{bash, eval = F}
 "$MUMMER_BIN_DIR"/mummerplot --layout --png "$WORKING_DIR"/nucmer/ref_uniT6.delta --prefix "$WORKING_DIR"/nucmer/ref_v_uniT6
 ```
-f
+
+![image](/images/ref_v_uniT6.png)
+
 Reference v. Unicycler T7_2 assembly:
 ```{bash, eval = F}
 "$MUMMER_BIN_DIR"/mummerplot --layout --png "$WORKING_DIR"/nucmer/ref_v_uniT7_2.delta --prefix "$WORKING_DIR"/nucmer/ref_v_uni7_2
@@ -169,11 +187,7 @@ Reference v. Unicycler T8 assembly:
 ```
 ![image](/images/ref_v_uniT8.png)
 
-
-##### Commands:
-```{bash, eval = F}
-echo -e "export LD_LIBRARY_PATH="$PYTHON_LIB_DIR":"$LD_LIBRARY_PATH"\n"$UNICYCLER_BIN_DIR"/unicycler --mode normal --short1 "$SHORT_FASTQ1" --short2 "$SHORT_FASTQ2" -o "$OUTPUT_DIR" --pilon_path "$PILON_BIN_DIR"/pilon-1.22.jar -t "$THREADS"" | qsub -P jdhotopp-lab -N unicycler -wd "$OUTPUT_DIR" -q threaded.q -pe thread "$THREADS" -l mem_free=5G
-```
+Mitochondria was unable to be assembled in one piece using Unicycler despite the addition of long read data.
 
 ## Assemble Mansonella mitochondrial genome with NOVOPlasty
 
@@ -584,7 +598,7 @@ Use Quality Scores   = It will take in account the quality scores, only use this
 
 ### Assemble Mansonella mitochondrial genome using short read FASTQs with NOVOPlasty
 
-The reads for P359_3 are no longer on our file system.
+Not enough coverage for mitochondrial assembly from T7_2 and P359_3
 
 ##### Input Sets:
 ```{bash, eval = F}
@@ -613,6 +627,7 @@ echo -e ""$PERL_BIN_DIR"/perl "$NOVOPLASTY_BIN_DIR"/NOVOPlasty3.8.1.pl -c "$CONF
 ### Check if NOVOPlasty can assemble a complete Mansonella mitochondria without a reference sequence input
 
 The assemblies differ by one ambigious base pair position.
+
 ##### Inputs:
 ```{bash, eval = F}
 ## T8
@@ -640,6 +655,9 @@ With reference assembly stats:
 ```{bash, eval = F}
 Contig1 13622   13622   perG+C:25.8     T:7193  C:995   G:2520  A:2857  other:57
 ```
+
+Difference in assemblies:
+
 ```{bash, eval = F}
 tail -n1  /local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/novoplasty/assembly1/T8/Circularized_assembly_1_T8.fasta
 ```
@@ -653,7 +671,7 @@ tail -n1  /local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/novoplasty/a
 AATTTTTTTATTTTATTAATGTTTTTTTGTTTTTTATATTTTTTGTTGTTTTTTTTTTTTTGTTATGGTTAATTTTGTAATCATTTTATAATTTTTACTTTAGTAAAATTTGTTTTTGTGG
 ```
 
-### Compare the T6 and T8 mitochondria assemblies from NOVOPlasty
+### Identify proper T6 mitochondria assembly
 
 Only one circularized assembly was recovered from T8. There are four options (involving different combinations of four contigs) for T6:  
 
@@ -662,7 +680,7 @@ Only one circularized assembly was recovered from T8. There are four options (in
 >Contig 01+02+04  
 >Contig 01+03+05  
 
-Both assemblies look like they have a deletion at around 8.5 kb relative to the reference.
+T8 look like they have a deletion at around 8.5 kb relative to the reference.
 
 ##### Inputs:
 ```{bash, eval = F}
@@ -683,12 +701,6 @@ Reference v. NOVOPlasty T6 assembly:
 "$MUMMER_BIN_DIR"/mummerplot --layout --png "$WORKING_DIR"/nucmer/ref_v_novoT6.delta --prefix "$WORKING_DIR"/nucmer/ref_v_novoT6
 ```
 ![image](/images/ref_v_novoT6.png)
-
-Reference v. NOVOPlasty T8 assembly:
-```{bash, eval = F}
-"$MUMMER_BIN_DIR"/mummerplot --layout --png "$WORKING_DIR"/nucmer/ref_v_novoT8.delta --prefix "$WORKING_DIR"/nucmer/ref_v_novoT8
-```
-![image](/images/ref_v_novoT8.png)
 
 NOVOPlasty T8 assembly v. NOVOPlasty T6 assembly:
 ```{bash, eval = F}
@@ -754,7 +766,83 @@ rm "$WORKING_DIR"/final_assemblies/novoplasty_T8_pt1.fasta
 rm "$WORKING_DIR"/final_assemblies/novoplasty_T8_pt2.fasta
 ```
 
-## Look at the 8.5 kb position deletion in the T6 and T8 assemblies
+# Compare the T6 and T8 mitochondria assemblies from NOVOPlasty
+
+## Compare sequence identity between the three mitogenomes using BLASTN
+
+M. ozzardi genome used as query, T6 and T8 assemblies used as reference:
+
+![image](/images/blast1.png)
+
+T6 used as query, T8 used as reference:
+
+![image](/images/blast2.png)
+
+## Annotate the M. ozzardi mitogenome and the T6, T8 NOVOPlasty assemblies
+
+### Use GeSeq to annotate the mitogenomes
+
+##### Inputs:
+
+![image](/images/geseq_settings.png)
+
+## Visualize synteny between the three mitogenomes using ACT
+
+### Create coords file readable in ACT
+
+##### Inputs:
+```{bash, eval = F}
+REF_FNA=/local/projects-t3/EBMAL/mchung_dir/mansonella/references/KX822021.1.fna
+T6_NOVOPLASTY_FNA="$WORKING_DIR"/final_assemblies/novoplasty_T6.fasta
+T8_NOVOPLASTY_FNA="$WORKING_DIR"/final_assemblies/novoplasty_T8.fasta
+```
+
+##### Commands: 
+```{bash, eval = F}
+"$MUMMER_BIN_DIR"/nucmer "$REF_FNA" "$T6_NOVOPLASTY_FNA" -p "$WORKING_DIR"/nucmer/ref_v_novoT6
+"$MUMMER_BIN_DIR"/nucmer "$T8_NOVOPLASTY_FNA" "$REF_FNA"  -p "$WORKING_DIR"/nucmer/novoT8_v_ref
+
+"$MUMMER_BIN_DIR"/show-coords "$WORKING_DIR"/nucmer/ref_v_novoT6.delta > "$WORKING_DIR"/nucmer/ref_v_novoT6.coords
+"$MUMMER_BIN_DIR"/show-coords "$WORKING_DIR"/nucmer/novoT8_v_ref.delta > "$WORKING_DIR"/nucmer/novoT8_v_ref.coords
+perl ~/scripts/nucmer_coords2ACT_galaxy.pl "$WORKING_DIR"/nucmer/ref_v_novoT6.coords "$WORKING_DIR"/nucmer/ref_v_novoT6.tab
+perl ~/scripts/nucmer_coords2ACT_galaxy.pl "$WORKING_DIR"/nucmer/novoT8_v_ref.coords "$WORKING_DIR"/nucmer/novoT8_v_ref.tab
+```
+
+### Set GenBank and links file for ACT
+
+##### Inputs:
+
+![image](/images/act_settings.png)
+
+![image](/images/act.png)
+
+########################
+
+##### Input Sets:
+```{bash, eval = F}
+SEED_LENGTH=23
+THREADS=16
+
+## T6
+OUTPUT_PREFIX=T6_v_novoT6
+REF_FNA="$WORKING_DIR"/final_assemblies/novoplasty_T6.fasta
+FASTQ1=/local/projects/EMANS/T6/ILLUMINA_DATA/EMANS_20181012_K00134_IL100106386_S1_L001_R1_trimmed.fastq.gz
+FASTQ2=/local/projects/EMANS/T6/ILLUMINA_DATA/EMANS_20181012_K00134_IL100106386_S1_L001_R2_trimmed.fastq.gz
+
+## T8
+OUTPUT_PREFIX=T8_v_novoT8
+REF_FNA="$WORKING_DIR"/final_assemblies/novoplasty_T8.fasta
+FASTQ1=/local/projects/EMANS/T8/ILLUMINA_DATA/EMANS_20180815_K00134_IL100106041_S21_L005_R1_trimmed.fastq.gz
+FASTQ2=/local/projects/EMANS/T8/ILLUMINA_DATA/EMANS_20180815_K00134_IL100106041_S21_L005_R2_trimmed.fastq.gz
+```
+
+##### Commands:
+```{bash, eval = F}
+"$BWA_BIN_DIR"/bwa index "$REF_FNA"
+echo -e ""$BWA_BIN_DIR"/bwa mem -t "$THREADS" -k "$SEED_LENGTH" "$REF_FNA" "$FASTQ1" "$FASTQ2" | "$SAMTOOLS_BIN_DIR"/samtools view -bho "$WORKING_DIR"/assemblies/"$OUTPUT_PREFIX".bam -" | qsub -q threaded.q  -pe thread "$THREADS" -P jdhotopp-lab -l mem_free=5G -N bwa -wd "$WORKING_DIR"/assemblies/
+```
+
+## Look at the 8.5 kb position deletion in the T8 assemblies
 
 ### Align Illumina reads from each strain to Mansonella ozzadi mitochondria using BWA MEM
 

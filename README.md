@@ -156,8 +156,7 @@ Reference v. Unicycler T6 assembly:
 ```{bash, eval = F}
 "$MUMMER_BIN_DIR"/mummerplot --layout --png "$WORKING_DIR"/nucmer/ref_uniT6.delta --prefix "$WORKING_DIR"/nucmer/ref_v_uniT6
 ```
-![image](/images/ref_v_uniT6.png)
-
+f
 Reference v. Unicycler T7_2 assembly:
 ```{bash, eval = F}
 "$MUMMER_BIN_DIR"/mummerplot --layout --png "$WORKING_DIR"/nucmer/ref_v_uniT7_2.delta --prefix "$WORKING_DIR"/nucmer/ref_v_uni7_2
@@ -212,7 +211,7 @@ Heteroplasmy:
 MAF                   =
 HP exclude list       =
 PCR-free              =
-
+d
 Optional:
 -----------------------
 Insert size auto      = yes

@@ -11,11 +11,15 @@
   - [Assemble Mansonella mitochondrial genome with Unicycler](#assemble-mansonella-mitochondrial-genome-with-unicycler)
     - [Assemble T7_2 and T8 using long read FASTQ and subset short read FASTQs](#assemble-t7_2-and-t8-using-long-read-fastq-and-subset-short-read-fastqs)
     - [Assemble T6 and P359_3 using subset short read FASTQs](#assemble-t6-and-p359_3-using-subset-short-read-fastqs)
+    - [Identify mitochondria genome was in Unicycler assemblies](#identify-mitochondria-genome-was-in-unicycler-assemblies)
   - [Assemble Mansonella mitochondrial genome with NOVOPlasty](#assemble-mansonella-mitochondrial-genome-with-novoplasty)
     - [Create contig files for NOVOPlasty assembly](#create-contig-files-for-novoplasty-assembly)
     - [Assemble Mansonella mitochondrial genome using short read FASTQs with NOVOPlasty](#assemble-mansonella-mitochondrial-genome-using-short-read-fastqs-with-novoplasty)
     - [Check if NOVOPlasty can assemble a complete Mansonella mitochondria without a reference sequence input](#check-if-novoplasty-can-assemble-a-complete-mansonella-mitochondria-without-a-reference-sequence-input)
     - [Compare the T6 and T8 mitochondria assemblies from NOVOPlasty](#compare-the-t6-and-t8-mitochondria-assemblies-from-novoplasty)
+    - [Rotate assemblies to the M. ozzardi mitochondria](#rotate-assemblies-to-the-m-ozzardi-mitochondria)
+      - [Rotate T6](#rotate-t6)
+      - [Rotate T8](#rotate-t8)
   - [Look at the 8.5 kb position deletion in the T6 and T8 assemblies](#look-at-the-85-kb-position-deletion-in-the-t6-and-t8-assemblies)
     - [Align Illumina reads from each strain to Mansonella ozzadi mitochondria using BWA MEM](#align-illumina-reads-from-each-strain-to-mansonella-ozzadi-mitochondria-using-bwa-mem)
     - [Sort and index BAM files](#sort-and-index-bam-files)
@@ -70,6 +74,7 @@ mkdir -p "$WORKING_DIR"/assemblies/novoplasty/assembly1/T8
 mkdir -p "$WORKING_DIR"/assemblies/novoplasty/assembly1/P359_3
 
 mkdir -p "$WORKING_DIR"/nucmer/
+mkdir -p "$WORKING_DIR"/final_assemblies/
 ```
 
 # Assemble mitochondrial genome of Mansonella using 4 different samples
@@ -131,6 +136,40 @@ SHORT_FASTQ1=/local/projects-t4/EMANS/P359_3_Manonella_Lib/ILLUMINA_DATA/EMANS_2
 SHORT_FASTQ2=/local/projects-t4/EMANS/P359_3_Manonella_Lib/ILLUMINA_DATA/EMANS_20180308_K00134_IL100099612_S5_L004_R2_trimmed.fastq.gz
 OUTPUT_DIR="$WORKING_DIR"/assemblies/unicycler/assembly1/P359_3
 ```
+
+### Identify mitochondria genome was in Unicycler assemblies
+
+##### Input Sets:
+```{bash, eval = F}
+REF_FNA=/local/projects-t3/EBMAL/mchung_dir/mansonella/references/KX822021.1.fna
+T6_UNICYCLER_FNA=/local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/unicycler/assembly1/T6/assembly.fasta
+T7_2_UNICYCLER_FNA=/local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/unicycler/assembly1/T7_2/assembly.fasta
+T8_UNICYCLER_FNA=/local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/unicycler/assembly1/T8/assembly.fasta
+```
+
+```{bash, eval = F}
+"$MUMMER_BIN_DIR"/nucmer "$REF_FNA" "$T6_UNICYCLER_FNA" -p "$WORKING_DIR"/nucmer/ref_v_uniT6
+"$MUMMER_BIN_DIR"/nucmer "$REF_FNA" "$T7_2_UNICYCLER_FNA" -p "$WORKING_DIR"/nucmer/ref_v_uniT7_2
+"$MUMMER_BIN_DIR"/nucmer "$REF_FNA" "$T8_UNICYCLER_FNA" -p "$WORKING_DIR"/nucmer/ref_v_uniT8
+```
+Reference v. Unicycler T6 assembly:
+```{bash, eval = F}
+"$MUMMER_BIN_DIR"/mummerplot --layout --png "$WORKING_DIR"/nucmer/ref_uniT6.delta --prefix "$WORKING_DIR"/nucmer/ref_v_uniT6
+```
+![image](/images/ref_v_uniT6.png)
+
+Reference v. Unicycler T7_2 assembly:
+```{bash, eval = F}
+"$MUMMER_BIN_DIR"/mummerplot --layout --png "$WORKING_DIR"/nucmer/ref_v_uniT7_2.delta --prefix "$WORKING_DIR"/nucmer/ref_v_uni7_2
+```
+No alignment data to plot.
+
+Reference v. Unicycler T8 assembly:
+```{bash, eval = F}
+"$MUMMER_BIN_DIR"/mummerplot --layout --png "$WORKING_DIR"/nucmer/ref_v_uniT8.delta --prefix "$WORKING_DIR"/nucmer/ref_v_uniT8
+```
+![image](/images/ref_v_uniT8.png)
+
 
 ##### Commands:
 ```{bash, eval = F}
@@ -657,6 +696,64 @@ NOVOPlasty T8 assembly v. NOVOPlasty T6 assembly:
 "$MUMMER_BIN_DIR"/mummerplot --layout --png "$WORKING_DIR"/nucmer/novoT8_v_novoT6.delta --prefix "$WORKING_DIR"/nucmer/novoT8_v_novoT6
 ```
 ![image](/images/novoT8_v_novoT6.png)
+
+Contig 01+02+05 (Option #2) looks like the correct T6 assembly.
+
+### Rotate assemblies to the M. ozzardi mitochondria
+
+##### Inputs:
+```{bash, eval = F}
+REF_FNA=/local/projects-t3/EBMAL/mchung_dir/mansonella/references/KX822021.1.fna
+T6_NOVOPLASTY_FNA=/local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/novoplasty/assembly1/T6/Option_2_T6.fasta
+T8_NOVOPLASTY_FNA=/local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/novoplasty/assembly1/T8/Circularized_assembly_1_T8.fasta
+```
+
+#### Rotate T6
+
+T6 assembly is 13,619 bp long.
+
+```{bash, eval = F}
+"$MUMMER_BIN_DIR"/nucmer "$REF_FNA" "$T6_NOVOPLASTY_FNA" -p "$WORKING_DIR"/nucmer/ref_v_novoT6
+"$MUMMER_BIN_DIR"/show-coords -bHT "$WORKING_DIR"/nucmer/ref_v_novoT6.delta
+```
+
+```{bash, eval = F}
+1       12662   925     13576   12662   12652   KX822021.1      Contig1
+12709   13611   1       896     903     896     KX822021.1      Contig1
+```
+
+```{bash, eval = F}
+"$SAMTOOLS_BIN_DIR"/samtools faidx "$T6_NOVOPLASTY_FNA" Contig1:925-13619 > "$WORKING_DIR"/final_assemblies/novoplasty_T6_pt1.fasta
+"$SAMTOOLS_BIN_DIR"/samtools faidx "$T6_NOVOPLASTY_FNA" Contig1:1-924 > "$WORKING_DIR"/final_assemblies/novoplasty_T6_pt2.fasta
+
+cat "$WORKING_DIR"/final_assemblies/novoplasty_T6_pt1.fasta "$WORKING_DIR"/final_assemblies/novoplasty_T6_pt2.fasta | grep -v "Contig1:1-924" > "$WORKING_DIR"/final_assemblies/novoplasty_T6.fasta
+rm "$WORKING_DIR"/final_assemblies/novoplasty_T6_pt1.fasta
+rm "$WORKING_DIR"/final_assemblies/novoplasty_T6_pt2.fasta
+```
+
+#### Rotate T8
+
+T8 assembly is 13,622 bp long.
+
+```{bash, eval = F}
+"$MUMMER_BIN_DIR"/nucmer "$REF_FNA" "$T8_NOVOPLASTY_FNA" -p "$WORKING_DIR"/nucmer/ref_v_novoT8
+"$MUMMER_BIN_DIR"/show-coords -bHT "$WORKING_DIR"/nucmer/ref_v_novoT8.delta
+```
+
+```{bash, eval = F}
+1       8453    963     9413    8453    8451    KX822021.1      Contig1
+8670    12662   9638    13618   3993    3981    KX822021.1      Contig1
+12679   13611   11      934     933     924     KX822021.1      Contig1
+```
+
+```{bash, eval = F}
+"$SAMTOOLS_BIN_DIR"/samtools faidx "$T8_NOVOPLASTY_FNA" Contig1:963-13622 > "$WORKING_DIR"/final_assemblies/novoplasty_T8_pt1.fasta
+"$SAMTOOLS_BIN_DIR"/samtools faidx "$T8_NOVOPLASTY_FNA" Contig1:1-962 > "$WORKING_DIR"/final_assemblies/novoplasty_T8_pt2.fasta
+
+cat "$WORKING_DIR"/final_assemblies/novoplasty_T8_pt1.fasta "$WORKING_DIR"/final_assemblies/novoplasty_T8_pt2.fasta | grep -v "Contig1:1-962" > "$WORKING_DIR"/final_assemblies/novoplasty_T8.fasta
+rm "$WORKING_DIR"/final_assemblies/novoplasty_T8_pt1.fasta
+rm "$WORKING_DIR"/final_assemblies/novoplasty_T8_pt2.fasta
+```
 
 ## Look at the 8.5 kb position deletion in the T6 and T8 assemblies
 

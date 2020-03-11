@@ -3,24 +3,26 @@
 <!-- MarkdownTOC autolink="true" levels="1,2,3,4" -->
 
 - [Set software and directory paths](#set-software-and-directory-paths)
-	- [Software](#software)
-	- [Directories](#directories)
-	- [Create directories](#create-directories)
+  - [Software](#software)
+  - [Directories](#directories)
+  - [Create directories](#create-directories)
 - [Assemble mitochondrial genome of Mansonella using 4 different samples](#assemble-mitochondrial-genome-of-mansonella-using-4-different-samples)
-	- [Download Mansonella ozzardi mitochondra reference](#download-mansonella-ozzardi-mitochondra-reference)
-	- [Assemble Mansonella mitochondrial genome with NOVOPlasty](#assemble-mansonella-mitochondrial-genome-with-novoplasty)
-		- [Create contig files for NOVOPlasty assembly](#create-contig-files-for-novoplasty-assembly)
-		- [Assemble Mansonella mitochondrial genome using short read FASTQs with NOVOPlasty](#assemble-mansonella-mitochondrial-genome-using-short-read-fastqs-with-novoplasty)
-		- [Check if NOVOPlasty can assemble a complete Mansonella mitochondria without a reference sequence input](#check-if-novoplasty-can-assemble-a-complete-mansonella-mitochondria-without-a-reference-sequence-input)
-		- [Identify proper T6 mitochondria assembly](#identify-proper-t6-mitochondria-assembly)
-	- [Compare sequence identity between the the M. ozzardi mitogenome and the T6, T8 assemblies using BLASTN](#compare-sequence-identity-between-the-the-m-ozzardi-mitogenome-and-the-t6-t8-assemblies-using-blastn)
+  - [Download Mansonella ozzardi mitochondra reference](#download-mansonella-ozzardi-mitochondra-reference)
+  - [Assemble Mansonella mitochondrial genome with NOVOPlasty](#assemble-mansonella-mitochondrial-genome-with-novoplasty)
+    - [Create contig files for NOVOPlasty assembly](#create-contig-files-for-novoplasty-assembly)
+    - [Assemble Mansonella mitochondrial genome using short read FASTQs with NOVOPlasty](#assemble-mansonella-mitochondrial-genome-using-short-read-fastqs-with-novoplasty)
+    - [Check if NOVOPlasty can assemble a complete Mansonella mitochondria without a reference sequence input](#check-if-novoplasty-can-assemble-a-complete-mansonella-mitochondria-without-a-reference-sequence-input)
+    - [Identify proper T6 mitochondria assembly](#identify-proper-t6-mitochondria-assembly)
+  - [Compare sequence identity between the the M. ozzardi mitogenome and the T6, T8 assemblies using BLASTN](#compare-sequence-identity-between-the-the-m-ozzardi-mitogenome-and-the-t6-t8-assemblies-using-blastn)
 - [Create improved assembly of M. perstans mitochondria by combining long read data](#create-improved-assembly-of-m-perstans-mitochondria-by-combining-long-read-data)
-	- [Identify T8 long and short reads that map to T8 NOVOPlasty assembly](#identify-t8-long-and-short-reads-that-map-to-t8-novoplasty-assembly)
-		- [Map T8 short reads to T8 assembly](#map-t8-short-reads-to-t8-assembly)
-		- [Create a subset FASTQ containing T8 short reads that mapped to T8 assembly](#create-a-subset-fastq-containing-t8-short-reads-that-mapped-to-t8-assembly)
-		- [Map T8 long reads to T8 assembly](#map-t8-long-reads-to-t8-assembly)
-		- [Create a subset FASTQ containing T8 short reads that mapped to T8 assembly](#create-a-subset-fastq-containing-t8-short-reads-that-mapped-to-t8-assembly-1)
-	- [Assemble T8 mitochondria using subset short and long read FASTQs that contain reads that mapped to the T8 NOVOPlasty assembly](#assemble-t8-mitochondria-using-subset-short-and-long-read-fastqs-that-contain-reads-that-mapped-to-the-t8-novoplasty-assembly)
+  - [Identify T8 long and short reads that map to T8 NOVOPlasty assembly](#identify-t8-long-and-short-reads-that-map-to-t8-novoplasty-assembly)
+    - [Map T8 short reads to T8 assembly](#map-t8-short-reads-to-t8-assembly)
+    - [Create a subset FASTQ containing T8 short reads that mapped to T8 assembly](#create-a-subset-fastq-containing-t8-short-reads-that-mapped-to-t8-assembly)
+    - [Map T8 long reads to T8 assembly](#map-t8-long-reads-to-t8-assembly)
+    - [Create a subset FASTQ containing T8 short reads that mapped to T8 assembly](#create-a-subset-fastq-containing-t8-short-reads-that-mapped-to-t8-assembly-1)
+  - [Assemble T8 mitochondria using subset short and long read FASTQs that contain reads that mapped to the T8 NOVOPlasty assembly](#assemble-t8-mitochondria-using-subset-short-and-long-read-fastqs-that-contain-reads-that-mapped-to-the-t8-novoplasty-assembly)
+  - [T8](#t8)
+  - [T6](#t6)
 
 <!-- /MarkdownTOC -->
 
@@ -711,3 +713,25 @@ qsub -q threaded.q  -pe thread "$THREADS" -P jdhotopp-lab -l mem_free=5G -N geto
 
 
 qsub -q threaded.q  -pe thread "$THREADS" -P jdhotopp-lab -l mem_free=5G -N getorganelle -wd /local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/getorganelle -b y /local/aberdeen2rw/julie/Matt_dir/packages/GetOrganelle/get_organelle_from_reads.py -1 "$SHORT_FASTQ1" -2 "$SHORT_FASTQ2" -s /local/aberdeen2rw/julie/Matt_dir/packages/GetOrganelle/GetOrganelleLib/SeedDatabase/animal_mt.fasta --genes /local/aberdeen2rw/julie/Matt_dir/packages/GetOrganelle/GetOrganelleLib/LabelDatabase/animal_mt.fasta -R 10 -k 21,45,65,85,105 -F animal_mt -o /local/projects-t3/EBMAL/mchung_dir/mansonella/assemblies/getorganelle -t "$THREADS"
+
+
+## T8
+OUTPUT_PREFIX=T8_v_getorganelleT8
+REF_FNA="$WORKING_DIR"/assemblies/getorganelle/animal_mt.K105.complete.graph1.1.path_sequence.fasta
+LONG_FASTQ="$WORKING_DIR"/assemblies/emans_T8_mda_branched.subset.fastq.gz
+SHORT_FASTQ1="$WORKING_DIR"/assemblies/EMANS_20180815_K00134_IL100106041_S21_L005_R1_trimmed.subset.fastq.gz
+SHORT_FASTQ2="$WORKING_DIR"/assemblies/EMANS_20180815_K00134_IL100106041_S21_L005_R2_trimmed.subset.fastq.gz
+
+## T6
+OUTPUT_PREFIX=T6_v_getorganelleT8
+REF_FNA="$WORKING_DIR"/assemblies/getorganelle/animal_mt.K105.complete.graph1.1.path_sequence.fasta
+SHORT_FASTQ1=/local/projects/EMANS/T6/ILLUMINA_DATA/EMANS_20181012_K00134_IL100106386_S1_L001_R1_trimmed.fastq.gz
+SHORT_FASTQ2=/local/projects/EMANS/T6/ILLUMINA_DATA/EMANS_20181012_K00134_IL100106386_S1_L001_R2_trimmed.fastq.gz
+
+
+"$MINIMAP2_BIN_DIR"/minimap2 -ax map-ont "$REF_FNA" "$LONG_FASTQ" | "$SAMTOOLS_BIN_DIR"/samtools view -bho "$WORKING_DIR"/assemblies/"$OUTPUT_PREFIX".ont.bam -
+
+
+/usr/local/packages/bwa-0.7.17/bin/bwa index "$REF_FNA"
+ echo -e "/usr/local/packages/bwa-0.7.17/bin/bwa mem -t 4 -k 23 "$REF_FNA" "$SHORT_FASTQ1" "$SHORT_FASTQ2" | /usr/local/packages/samtools-1.3.1/bin/samtools view -bho "$WORKING_DIR"/assemblies/"$OUTPUT_PREFIX".pe.bam -" | qsub -q threaded.q  -pe thread 4 -P jdhotopp-lab -l mem_free=5G -N bwa -wd "$(dirname $output_bam)"
+

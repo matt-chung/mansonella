@@ -1,68 +1,41 @@
-<!-- MarkdownTOC -->
+<!-- MarkdownTOC autolink="true" levels="1,2,3,4" -->
 
-- Set software and directory paths
-  - Software
-  - Directories
-  - Identify T8 long and short reads that map to M. ozzardi mitogenome
-    - Map T8 short reads to M. ozzardi mitogenome
-      - Inputs:
-      - Commands:
-    - Create a subset FASTQ containing T8 short reads that mapped to M. ozzardi mitogenome
-      - Inputs:
-      - Commands:
-  - Assemble T8 mitochondria using subset short read FASTQs that contain reads that mapped to M. ozzardi mitogenome
-      - Inputs:
-      - Commands:
-  - Rotate T8 assembly to M. ozzardi mitogenome
-      - Inputs
-    - Run NUCMER on T8 assembly and M. ozzardi mitogenome
-      - Commands
-    - Rotate T8 assembly from NUCMER coordinates
-      - Commands
-    - Compare synteny between the T8 and M. ozzardi mitogenomes using ACT
-    - Create coords file readable in ACT
-      - Inputs
-      - Commands
-    - Set file inputs for ACT
-      - Inputs:
-- Construct a phylogenetic tree for the M. perstans and other nematode mitogenomes
-  - Prepare mitogenome reference files
-    - Download nematode mitogenome references
-      - Commands
-    - Copy T8 mitogenome assembly to references directory
-      - Commands
-    - Combine mitogenome FASTAs to a single multi-FASTA
-      - Commands
-  - Align mitogenomes using MAFFT
-      - Inputs
-      - Commands
-  - Construct phylogenetic tree using IQ-TREE
-      - Inputs
-      - Commands
-  - Visualize phylogenetic tree using iTOL
-      - Inputs
-- Assess core sequence identity between M. perstans mitogenome and 15 other filarial mitogenomes
-  - Use mothur to filter MAFFT alignment to only contain positions present in all 16 mitogenomes
-      - Inputs
-      - Commands
-  - Visualize core mitogenome sequence identity
-    - Set R inputs
-    - Load R packages and view sessionInfo
-    - Construct core sequence identity matrix
-    - Set heatmap rownames order and removes upper half of the triangle plot
-    - Plot sequence identity matrix as heatmap
-- Identify SNPs and indels in the M. perstans mitogenome
-  - Map T6 and T8 short reads to M. ozzardi mitogenome
-      - Inputs:
-      - Commands:
-    - Sort and index BAM files
-      - Input Sets:
-      - Commands:
-    - Generate MPILEUPs for BAM files
-      - Input Sets:
-      - Commands:
-    - Count SNPs and INDELs in the MPILEUPs
-      - Input Sets:
+- [Set software and directory paths](#set-software-and-directory-paths)
+  - [Software](#software)
+  - [Directories](#directories)
+  - [Identify T8 long and short reads that map to M. ozzardi mitogenome](#identify-t8-long-and-short-reads-that-map-to-m-ozzardi-mitogenome)
+    - [Map T8 short reads to M. ozzardi mitogenome](#map-t8-short-reads-to-m-ozzardi-mitogenome)
+    - [Create a subset FASTQ containing T8 short reads that mapped to M. ozzardi mitogenome](#create-a-subset-fastq-containing-t8-short-reads-that-mapped-to-m-ozzardi-mitogenome)
+  - [Assemble T8 mitochondria using subset short read FASTQs that contain reads that mapped to M. ozzardi mitogenome](#assemble-t8-mitochondria-using-subset-short-read-fastqs-that-contain-reads-that-mapped-to-m-ozzardi-mitogenome)
+  - [Rotate T8 assembly to M. ozzardi mitogenome](#rotate-t8-assembly-to-m-ozzardi-mitogenome)
+    - [Run NUCMER on T8 assembly and M. ozzardi mitogenome](#run-nucmer-on-t8-assembly-and-m-ozzardi-mitogenome)
+    - [Rotate T8 assembly from NUCMER coordinates](#rotate-t8-assembly-from-nucmer-coordinates)
+- [Compare the M. perstans T8 mitogenome assembly with the M. ozzardi mitogenome](#compare-the-m-perstans-t8-mitogenome-assembly-with-the-m-ozzardi-mitogenome)
+  - [Annotate the M. ozzardi mitogenome and the T8 assembly](#annotate-the-m-ozzardi-mitogenome-and-the-t8-assembly)
+  - [Filter GeSeq output GFFs for ACT](#filter-geseq-output-gffs-for-act)
+  - [Create coords file readable in ACT](#create-coords-file-readable-in-act)
+  - [Set file inputs for ACT](#set-file-inputs-for-act)
+- [Construct a phylogenetic tree for the M. perstans and other nematode mitogenomes](#construct-a-phylogenetic-tree-for-the-m-perstans-and-other-nematode-mitogenomes)
+  - [Prepare mitogenome reference files](#prepare-mitogenome-reference-files)
+    - [Download nematode mitogenome references](#download-nematode-mitogenome-references)
+    - [Copy T8 mitogenome assembly to references directory](#copy-t8-mitogenome-assembly-to-references-directory)
+    - [Combine mitogenome FASTAs to a single multi-FASTA](#combine-mitogenome-fastas-to-a-single-multi-fasta)
+  - [Align mitogenomes using MAFFT](#align-mitogenomes-using-mafft)
+  - [Construct phylogenetic tree using IQ-TREE](#construct-phylogenetic-tree-using-iq-tree)
+  - [Visualize phylogenetic tree using iTOL](#visualize-phylogenetic-tree-using-itol)
+- [Assess core sequence identity between M. perstans mitogenome and 15 other filarial mitogenomes](#assess-core-sequence-identity-between-m-perstans-mitogenome-and-15-other-filarial-mitogenomes)
+  - [Use mothur to filter MAFFT alignment to only contain positions present in all 16 mitogenomes](#use-mothur-to-filter-mafft-alignment-to-only-contain-positions-present-in-all-16-mitogenomes)
+  - [Visualize core mitogenome sequence identity](#visualize-core-mitogenome-sequence-identity)
+    - [Set R inputs](#set-r-inputs)
+    - [Load R packages and view sessionInfo](#load-r-packages-and-view-sessioninfo)
+    - [Construct core sequence identity matrix](#construct-core-sequence-identity-matrix)
+    - [Set heatmap rownames order and removes upper half of the triangle plot](#set-heatmap-rownames-order-and-removes-upper-half-of-the-triangle-plot)
+    - [Plot sequence identity matrix as heatmap](#plot-sequence-identity-matrix-as-heatmap)
+- [Identify SNPs and indels in the M. perstans mitogenome](#identify-snps-and-indels-in-the-m-perstans-mitogenome)
+  - [Map T6 and T8 short reads to M. ozzardi mitogenome](#map-t6-and-t8-short-reads-to-m-ozzardi-mitogenome)
+    - [Sort and index BAM files](#sort-and-index-bam-files)
+    - [Generate MPILEUPs for BAM files](#generate-mpileups-for-bam-files)
+    - [Count SNPs and INDELs in the MPILEUPs](#count-snps-and-indels-in-the-mpileups)
 
 <!-- /MarkdownTOC -->
 
@@ -102,7 +75,7 @@ OUTPUT_DIR=/local/projects-t3/EBMAL/mchung_dir/mansonella/output
 
 ### Map T8 short reads to M. ozzardi mitogenome
 
-##### Inputs:
+##### Inputs
 ```{bash, eval = F}
 SEED_LENGTH=23
 THREADS=16
@@ -114,14 +87,14 @@ FASTQ1=/local/projects/EMANS/T8/ILLUMINA_DATA/EMANS_20180815_K00134_IL100106041_
 FASTQ2=/local/projects/EMANS/T8/ILLUMINA_DATA/EMANS_20180815_K00134_IL100106041_S21_L005_R2_trimmed.fastq.gz
 ```
 
-##### Commands:
+##### Commands
 ```{bash, eval = F}
 "$BWA_BIN_DIR"/bwa index "$REF_FNA"
 echo -e ""$BWA_BIN_DIR"/bwa mem -t "$THREADS" -k "$SEED_LENGTH" "$REF_FNA" "$FASTQ1" "$FASTQ2" | "$SAMTOOLS_BIN_DIR"/samtools view -bho "$WORKING_DIR"/assemblies/"$OUTPUT_PREFIX".bam -" | qsub -q threaded.q  -pe thread "$THREADS" -P jdhotopp-lab -l mem_free=5G -N bwa -wd "$WORKING_DIR"/assemblies/
 ```
 ### Create a subset FASTQ containing T8 short reads that mapped to M. ozzardi mitogenome
 
-##### Inputs:
+##### Inputs
 ```{bash, eval = F}
 ## T8
 OUTPUT_PREFIX=T8_v_KX822021.1
@@ -130,7 +103,7 @@ FASTQ2=/local/projects/EMANS/T8/ILLUMINA_DATA/EMANS_20180815_K00134_IL100106041_
 BAM="$WORKING_DIR"/assemblies/"$OUTPUT_PREFIX".bam
 ```
 
-##### Commands:
+##### Commands
 ```{bash, eval = F}
 "$SAMTOOLS_BIN_DIR"/samtools view -F 4 "$BAM" | awk '{print $1}' | sort -n | uniq > "$WORKING_DIR"/assemblies/"$OUTPUT_PREFIX".mappedreads.list
 "$SEQTK_BIN_DIR"/seqtk subseq "$FASTQ1" "$WORKING_DIR"/assemblies/"$OUTPUT_PREFIX".mappedreads.list | gzip > "$WORKING_DIR"/assemblies/"$(basename "$FASTQ1" | sed "s/[.]fastq.gz/.subset.fastq.gz/g")"
@@ -139,7 +112,7 @@ BAM="$WORKING_DIR"/assemblies/"$OUTPUT_PREFIX".bam
 
 ## Assemble T8 mitochondria using subset short read FASTQs that contain reads that mapped to M. ozzardi mitogenome
 
-##### Inputs:
+##### Inputs
 ```{bash, eval = F}
 THREADS=4
 REF_FNA="$WORKING_DIR"/references/KX822021.1.fna
@@ -151,7 +124,7 @@ FASTQ2="$WORKING_DIR"/assemblies/EMANS_20180815_K00134_IL100106041_S21_L005_R2_t
 OUTPUT_DIR="$WORKING_DIR"/assemblies/getorganelle/T8
 ```
 
-##### Commands:
+##### Commands
 ```{bash, eval = F}
 "$GETORGANELLE_BIN_DIR"/get_organelle_from_reads.py -1 "$FASTQ1" -2 "$FASTQ2" -s "$REF_FNA" --genes "$REF_GENE_FNA" -R 10 -k 21,45,65,85,105 -F animal_mt -o "$OUTPUT_DIR" -t "$THREADS"
 ```
@@ -192,9 +165,32 @@ rm "$WORKING_DIR"/final_assemblies/"$OUTPUT_PREFIX"_pt1.fasta
 rm "$WORKING_DIR"/final_assemblies/"$OUTPUT_PREFIX"_pt2.fasta
 ```
 
-### Compare synteny between the T8 and M. ozzardi mitogenomes using ACT
+# Compare the M. perstans T8 mitogenome assembly with the M. ozzardi mitogenome
 
-### Create coords file readable in ACT
+## Annotate the M. ozzardi mitogenome and the T8 assembly
+
+##### Inputs
+
+![image](/images/geseq_settings_xx.png)
+
+The GeSeq output zip file was moved to "$WORKING_DIR"/geseq/
+
+## Filter GeSeq output GFFs for ACT
+
+```{bash, eval = F}
+## M. ozzardi mitogenome
+GFF="$WORKING_DIR"/geseq/job-results-20203684142/GeSeqJob-20200305-23934_KX822021.1-UNVERIFIED:-Mansonella-ozzardi-mitochondrion-sequence_GFF3.gff3
+
+## M. perstans mitogenome
+GFF="$WORKING_DIR"/geseq/job-results-20203684142/GeSeqJob-20200305-23934_164174_164176_163722_163582_163580_164124_156882_163258_164170_163684_164128_163726_163640_161910_162854_164116_158062_164154_156920_163106_164074_163638+%28circular%29:11327-13647_GFF3.gff3
+```
+
+##### Commands
+```{bash, eval = F}
+awk '$3 == "rRNA" || $3 == "tRNA" || $3 == "CDS" {print $0}'  "$GFF"  | grep -v "blatN.*tRNA" > "$(echo "$GFF" | sed "s/[.]gff3/.act.gff3/g")"
+```
+
+## Create coords file readable in ACT
 
 ##### Inputs
 ```{bash, eval = F}
@@ -210,11 +206,13 @@ QUERY_FNA="$WORKING_DIR"/final_assemblies/getorganelle_T8.fasta
 perl ~/scripts/nucmer_coords2ACT_galaxy.pl "$WORKING_DIR"/nucmer/"$OUTPUT_PREFIX".coords "$WORKING_DIR"/nucmer/"$OUTPUT_PREFIX".tab
 ```
 
-### Set file inputs for ACT
+## Set file inputs for ACT
 
-##### Inputs:
+##### Inputs
 
-![image](/images/act_settings.png)
+Sequence file 1: "$WORKING_DIR"/final_assemblies/getorganelle_T8.fasta
+Comparison file 1: "$WORKING_DIR"/nucmer/ref_v_getorganelleT8.tab
+Sequence file 2: "$WORKING_DIR"/references/KX822021.1.fna
 
 ![image](/images/act.png)
 
@@ -423,7 +421,7 @@ print(cgasi.hm)
 
 ## Map T6 and T8 short reads to M. ozzardi mitogenome
 
-##### Inputs:
+##### Inputs
 ```{bash, eval = F}
 SEED_LENGTH=23
 THREADS=16
@@ -441,7 +439,7 @@ FASTQ1=/local/projects/EMANS/T8/ILLUMINA_DATA/EMANS_20180815_K00134_IL100106041_
 FASTQ2=/local/projects/EMANS/T8/ILLUMINA_DATA/EMANS_20180815_K00134_IL100106041_S21_L005_R2_trimmed.fastq.gz
 ```
 
-##### Commands:
+##### Commands
 ```{bash, eval = F}
 "$BWA_BIN_DIR"/bwa index "$REF_FNA"
 echo -e ""$BWA_BIN_DIR"/bwa mem -t "$THREADS" -k "$SEED_LENGTH" "$REF_FNA" "$FASTQ1" "$FASTQ2" | "$SAMTOOLS_BIN_DIR"/samtools view -bho "$WORKING_DIR"/assemblies/"$OUTPUT_PREFIX".bam -" | qsub -q threaded.q  -pe thread "$THREADS" -P jdhotopp-lab -l mem_free=5G -N bwa -wd "$WORKING_DIR"/assemblies/
@@ -449,7 +447,7 @@ echo -e ""$BWA_BIN_DIR"/bwa mem -t "$THREADS" -k "$SEED_LENGTH" "$REF_FNA" "$FAS
 
 ### Sort and index BAM files
 
-##### Input Sets:
+##### Input Sets
 ```{bash, eval = F}
 THREADS=4
 
@@ -460,7 +458,7 @@ BAM="$WORKING_DIR"/assemblies/T6_v_getorganelleT8.bam
 BAM="$WORKING_DIR"/assemblies/T8_v_getorganelleT8.bam
 ```
 
-##### Commands:
+##### Commands
 ```{bash, eval = F}
 "$SAMTOOLS_BIN_DIR"/samtools sort -@ "$THREADS" -o "$(echo "$BAM" | sed "s/[.]bam$/.sortedbyposition.bam/g")" "$BAM"
 "$SAMTOOLS_BIN_DIR"/samtools index -@ "$THREADS" "$(echo "$BAM" | sed "s/[.]bam$/.sortedbyposition.bam/g")"
@@ -468,7 +466,7 @@ BAM="$WORKING_DIR"/assemblies/T8_v_getorganelleT8.bam
 
 ### Generate MPILEUPs for BAM files
 
-##### Input Sets:
+##### Input Sets
 ```{bash, eval = F}
 REF_FNA="$WORKING_DIR"/final_assemblies/getorganelle_T8.fasta
 THREADS=4
@@ -480,13 +478,13 @@ BAM="$WORKING_DIR"/assemblies/T6_v_getorganelleT8.sortedbyposition.bam
 BAM="$WORKING_DIR"/assemblies/T8_v_getorganelleT8.sortedbyposition.bam
 ```
 
-##### Commands:
+##### Commands
 ```{bash, eval = F}
 "$SAMTOOLS_BIN_DIR"/samtools mpileup -f -aa -d 1000000 -o "$(echo "$BAM" | sed "s/[.]bam$/.mpileup/g")" "$BAM"
 ```
 
 ### Count SNPs and INDELs in the MPILEUPs
-##### Input Sets:
+##### Input Sets
 ```{bash, eval = F}
 ## T6
 MPILEUP="$WORKING_DIR"/assemblies/T6_v_getorganelleT8.sortedbyposition.mpileup

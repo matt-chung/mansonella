@@ -1,68 +1,45 @@
-<!-- MarkdownTOC -->
+<!-- MarkdownTOC autolink="true" levels="1,2,3,4" -->
 
-- Set software and directory paths
-  - Software
-  - Directories
-  - Identify T8 long and short reads that map to M. ozzardi mitogenome
-    - Map T8 short reads to M. ozzardi mitogenome
-      - Inputs:
-      - Commands:
-    - Create a subset FASTQ containing T8 short reads that mapped to M. ozzardi mitogenome
-      - Inputs:
-      - Commands:
-  - Assemble T8 mitochondria using subset short read FASTQs that contain reads that mapped to M. ozzardi mitogenome
-      - Inputs:
-      - Commands:
-  - Rotate T8 assembly to M. ozzardi mitogenome
-      - Inputs
-    - Run NUCMER on T8 assembly and M. ozzardi mitogenome
-      - Commands
-    - Rotate T8 assembly from NUCMER coordinates
-      - Commands
-    - Compare synteny between the T8 and M. ozzardi mitogenomes using ACT
-    - Create coords file readable in ACT
-      - Inputs
-      - Commands
-    - Set file inputs for ACT
-      - Inputs:
-- Construct a phylogenetic tree for the M. perstans and other nematode mitogenomes
-  - Prepare mitogenome reference files
-    - Download nematode mitogenome references
-      - Commands
-    - Copy T8 mitogenome assembly to references directory
-      - Commands
-    - Combine mitogenome FASTAs to a single multi-FASTA
-      - Commands
-  - Align mitogenomes using MAFFT
-      - Inputs
-      - Commands
-  - Construct phylogenetic tree using IQ-TREE
-      - Inputs
-      - Commands
-  - Visualize phylogenetic tree using iTOL
-      - Inputs
-- Assess core sequence identity between M. perstans mitogenome and 15 other filarial mitogenomes
-  - Use mothur to filter MAFFT alignment to only contain positions present in all 16 mitogenomes
-      - Inputs
-      - Commands
-  - Visualize core mitogenome sequence identity
-    - Set R inputs
-    - Load R packages and view sessionInfo
-    - Construct core sequence identity matrix
-    - Set heatmap rownames order and removes upper half of the triangle plot
-    - Plot sequence identity matrix as heatmap
-- Identify SNPs and indels in the M. perstans mitogenome
-  - Map T6 and T8 short reads to M. ozzardi mitogenome
-      - Inputs:
-      - Commands:
-    - Sort and index BAM files
-      - Input Sets:
-      - Commands:
-    - Generate MPILEUPs for BAM files
-      - Input Sets:
-      - Commands:
-    - Count SNPs and INDELs in the MPILEUPs
-      - Input Sets:
+- [Set software and directory paths](#set-software-and-directory-paths)
+  - [Software](#software)
+  - [Directories](#directories)
+- [Assemble M. ozzardi mitogenome](#assemble-m-ozzardi-mitogenome)
+  - [Identify T8 long and short reads that map to M. ozzardi mitogenome](#identify-t8-long-and-short-reads-that-map-to-m-ozzardi-mitogenome)
+    - [Map T8 short reads to M. ozzardi mitogenome](#map-t8-short-reads-to-m-ozzardi-mitogenome)
+    - [Create a subset FASTQ containing T8 short reads that mapped to M. ozzardi mitogenome](#create-a-subset-fastq-containing-t8-short-reads-that-mapped-to-m-ozzardi-mitogenome)
+  - [Assemble T8 mitochondria using subset short read FASTQs that contain reads that mapped to M. ozzardi mitogenome](#assemble-t8-mitochondria-using-subset-short-read-fastqs-that-contain-reads-that-mapped-to-m-ozzardi-mitogenome)
+  - [Rotate T8 assembly to M. ozzardi mitogenome](#rotate-t8-assembly-to-m-ozzardi-mitogenome)
+    - [Run NUCMER on T8 assembly and M. ozzardi mitogenome](#run-nucmer-on-t8-assembly-and-m-ozzardi-mitogenome)
+    - [Rotate T8 assembly from NUCMER coordinates](#rotate-t8-assembly-from-nucmer-coordinates)
+- [Compare synteny between the T8 and M. ozzardi mitogenomes using ACT](#compare-synteny-between-the-t8-and-m-ozzardi-mitogenomes-using-act)
+    - [Create coords file readable in ACT](#create-coords-file-readable-in-act)
+    - [Set file inputs for ACT](#set-file-inputs-for-act)
+- [Construct a phylogenetic tree for the M. perstans and other nematode mitogenomes](#construct-a-phylogenetic-tree-for-the-m-perstans-and-other-nematode-mitogenomes)
+  - [Prepare mitogenome reference files](#prepare-mitogenome-reference-files)
+    - [Download nematode mitogenome references](#download-nematode-mitogenome-references)
+    - [Copy T8 mitogenome assembly to references directory](#copy-t8-mitogenome-assembly-to-references-directory)
+    - [Combine mitogenome FASTAs to a single multi-FASTA](#combine-mitogenome-fastas-to-a-single-multi-fasta)
+  - [Align mitogenomes using MAFFT](#align-mitogenomes-using-mafft)
+  - [Construct phylogenetic tree using IQ-TREE](#construct-phylogenetic-tree-using-iq-tree)
+  - [Visualize phylogenetic tree using iTOL](#visualize-phylogenetic-tree-using-itol)
+- [Assess core sequence identity between M. perstans mitogenome and 15 other filarial mitogenomes](#assess-core-sequence-identity-between-m-perstans-mitogenome-and-15-other-filarial-mitogenomes)
+  - [Use mothur to filter MAFFT alignment to only contain positions present in all 16 mitogenomes](#use-mothur-to-filter-mafft-alignment-to-only-contain-positions-present-in-all-16-mitogenomes)
+  - [Visualize core mitogenome sequence identity](#visualize-core-mitogenome-sequence-identity)
+    - [Set R inputs](#set-r-inputs)
+    - [Load R packages and view sessionInfo](#load-r-packages-and-view-sessioninfo)
+    - [Construct core sequence identity matrix](#construct-core-sequence-identity-matrix)
+    - [Set heatmap rownames order and removes upper half of the triangle plot](#set-heatmap-rownames-order-and-removes-upper-half-of-the-triangle-plot)
+    - [Plot sequence identity matrix as heatmap](#plot-sequence-identity-matrix-as-heatmap)
+- [Identify SNPs and indels in the M. perstans mitogenome](#identify-snps-and-indels-in-the-m-perstans-mitogenome)
+  - [Map T6 and T8 short reads to M. ozzardi mitogenome](#map-t6-and-t8-short-reads-to-m-ozzardi-mitogenome)
+  - [Sort and index BAM files](#sort-and-index-bam-files)
+  - [Generate MPILEUPs for BAM files](#generate-mpileups-for-bam-files)
+  - [Count SNPs and indels in the MPILEUPs](#count-snps-and-indels-in-the-mpileups)
+  - [Plot SNP and indel locations from T6 and T8 mapped against the T8 assembly](#plot-snp-and-indel-locations-from-t6-and-t8-mapped-against-the-t8-assembly)
+    - [Set R inputs](#set-r-inputs-1)
+    - [Load R functions and view sessionInfo](#load-r-functions-and-view-sessioninfo)
+    - [Parse BASE files for plotting](#parse-base-files-for-plotting)
+    - [Create depth plot with SNP and indel marks for each BASE file](#create-depth-plot-with-snp-and-indel-marks-for-each-base-file)
 
 <!-- /MarkdownTOC -->
 
@@ -97,6 +74,8 @@ REFERENCES_DIR=/local/projects-t3/EBMAL/mchung_dir/mansonella/references
 WORKING_DIR=/local/projects-t3/EBMAL/mchung_dir/mansonella
 OUTPUT_DIR=/local/projects-t3/EBMAL/mchung_dir/mansonella/output
 ```
+
+# Assemble M. ozzardi mitogenome
 
 ## Identify T8 long and short reads that map to M. ozzardi mitogenome
 
@@ -192,7 +171,7 @@ rm "$WORKING_DIR"/final_assemblies/"$OUTPUT_PREFIX"_pt1.fasta
 rm "$WORKING_DIR"/final_assemblies/"$OUTPUT_PREFIX"_pt2.fasta
 ```
 
-### Compare synteny between the T8 and M. ozzardi mitogenomes using ACT
+# Compare synteny between the T8 and M. ozzardi mitogenomes using ACT
 
 ### Create coords file readable in ACT
 
@@ -447,7 +426,7 @@ FASTQ2=/local/projects/EMANS/T8/ILLUMINA_DATA/EMANS_20180815_K00134_IL100106041_
 echo -e ""$BWA_BIN_DIR"/bwa mem -t "$THREADS" -k "$SEED_LENGTH" "$REF_FNA" "$FASTQ1" "$FASTQ2" | "$SAMTOOLS_BIN_DIR"/samtools view -bho "$WORKING_DIR"/assemblies/"$OUTPUT_PREFIX".bam -" | qsub -q threaded.q  -pe thread "$THREADS" -P jdhotopp-lab -l mem_free=5G -N bwa -wd "$WORKING_DIR"/assemblies/
 ```
 
-### Sort and index BAM files
+## Sort and index BAM files
 
 ##### Input Sets:
 ```{bash, eval = F}
@@ -466,7 +445,7 @@ BAM="$WORKING_DIR"/assemblies/T8_v_getorganelleT8.bam
 "$SAMTOOLS_BIN_DIR"/samtools index -@ "$THREADS" "$(echo "$BAM" | sed "s/[.]bam$/.sortedbyposition.bam/g")"
 ```
 
-### Generate MPILEUPs for BAM files
+## Generate MPILEUPs for BAM files
 
 ##### Input Sets:
 ```{bash, eval = F}
@@ -485,7 +464,7 @@ BAM="$WORKING_DIR"/assemblies/T8_v_getorganelleT8.sortedbyposition.bam
 "$SAMTOOLS_BIN_DIR"/samtools mpileup -f -aa -d 1000000 -o "$(echo "$BAM" | sed "s/[.]bam$/.mpileup/g")" "$BAM"
 ```
 
-### Count SNPs and INDELs in the MPILEUPs
+## Count SNPs and indels in the MPILEUPs
 ##### Input Sets:
 ```{bash, eval = F}
 ## T6
@@ -495,5 +474,141 @@ MPILEUP="$WORKING_DIR"/assemblies/T6_v_getorganelleT8.sortedbyposition.mpileup
 MPILEUP="$WORKING_DIR"/assemblies/T8_v_getorganelleT8.sortedbyposition.mpileup
 ```
 
-
+##### Commands:
+```{bash, eval = F}
 "$PILEUP2BASE_BIN_DIR"/pileup2baseindel_no_strand.pl "$MPILEUP" 0 "$(echo "$MPILEUP" | sed "s/[.]mpileup$/.base/g")"
+```
+
+## Plot SNP and indel locations from T6 and T8 mapped against the T8 assembly
+
+### Set R inputs
+```{R}
+BASE.DIR <- "Z:/EBMAL/mchung_dir/mansonella/assemblies/"
+OUTPUT.DIR <- "Z:EBMAL/mchung_dir/mansonella/plots"
+```
+
+### Load R functions and view sessionInfo
+```{R}
+library(cowplot)
+library(ggplot2)
+library(reshape)
+library(scales)
+
+sessionInfo()
+```
+
+```{R, eval = F}
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows >= 8 x64 (build 9200)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.1252  LC_CTYPE=English_United States.1252    LC_MONETARY=English_United States.1252
+[4] LC_NUMERIC=C                           LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] scales_1.0.0  reshape_0.8.8 ggplot2_3.2.0 cowplot_1.0.0
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.2       rstudioapi_0.10  knitr_1.23       magrittr_1.5     tidyselect_0.2.5 munsell_0.5.0    colorspace_1.4-1
+ [8] R6_2.4.0         rlang_0.4.0      plyr_1.8.4       dplyr_0.8.3      tools_3.5.0      grid_3.5.0       gtable_0.3.0    
+[15] xfun_0.8         withr_2.1.2      yaml_2.2.0       lazyeval_0.2.2   assertthat_0.2.1 tibble_2.1.3     crayon_1.3.4    
+[22] purrr_0.3.2      glue_1.3.1       compiler_3.5.0   pillar_1.4.2     pkgconfig_2.0.2
+```
+
+### Parse BASE files for plotting
+```{R}
+mpileup_base.files <- list.files(BASE.DIR, pattern="*[.]base$", full.names = T)
+varcutoff <- 0.25
+
+plot.df <- list()
+
+for(i in 1:length(mpileup_base.files)){
+  mpileup_base_sum <- read.delim(mpileup_base.files[i],stringsAsFactors = F)
+  mpileup_base_sum$Insertion <- unlist(apply(mpileup_base_sum,1,function(x){
+    if(!is.na(x[8])){
+      return(sum(as.numeric(as.character(gsub(":.*","",unlist(strsplit(as.character(x[8]),split="[|]")))))))
+    }else{
+      return(0)
+    }
+  }))
+  mpileup_base_sum$Deletion <- unlist(apply(mpileup_base_sum,1,function(x){
+    if(!is.na(x[9])){
+      return(sum(as.numeric(as.character(gsub(":.*","",unlist(strsplit(as.character(x[9]),split="[|]")))))))
+    }else{
+      return(0)
+    }
+  }))
+  
+  mpileup_base_sum$depth <- rowSums(mpileup_base_sum[,4:9])
+  
+  mpileup_base_sum$snppos <- apply(mpileup_base_sum,1,function(x){
+    snp_cutoff <- as.numeric(as.character(x[10]))*varcutoff
+    ifelse(length(which(as.numeric(as.character(x[4:7])) > snp_cutoff)) > 1,return(T),return(F))
+  })
+  
+  mpileup_base_sum$inspos <- apply(mpileup_base_sum,1,function(x){
+    indel_cutoff <- as.numeric(as.character(x[10]))*varcutoff
+    ifelse(length(which(as.numeric(as.character(x[8])) > indel_cutoff)) > 0,return(T),return(F))
+  })
+  mpileup_base_sum$delpos <- apply(mpileup_base_sum,1,function(x){
+    indel_cutoff <- as.numeric(as.character(x[10]))*varcutoff
+    ifelse(length(which(as.numeric(as.character(x[9])) > indel_cutoff)) > 0,return(T),return(F))
+  })
+  
+  plot.df[[i]] <- mpileup_base_sum
+}
+```
+
+### Create depth plot with SNP and indel marks for each BASE file
+```{R,fig.width=20,fig.height=3}
+plot.list <- list()
+for(i in 1:length(plot.df)){
+  snppos <- plot.df[[i]][which(plot.df[[i]]$snppos == T),c(2,4,5,6,7,10)]
+  snppos <- melt(snppos,id.vars = c("loc"),measure.vars = c("A","T","G","C"))
+  inspos <- plot.df[[i]][which(plot.df[[i]]$inspos == T),c(2,4,5,6,7,10)]
+  delpos <- plot.df[[i]][which(plot.df[[i]]$delpos == T),c(2,4,5,6,7,10)]
+
+  plot.list[[i]] <- ggplot()+
+    geom_ribbon(mapping=aes_string(x=plot.df[[i]]$loc,ymin=0,ymax=plot.df[[i]]$depth),fill = "grey")+
+    geom_bar(mapping=aes_string(x=snppos$loc,y=snppos$value,fill=snppos$variable),width=5,stat="identity")+
+    scale_fill_manual(values=c("green","red","orange","blue"))+
+    scale_x_continuous(expand=c(0,0),label=comma)+
+    scale_y_continuous(expand=c(0,0),label=comma)+
+    labs(x="position",y="sequencing depth")+
+    guides(fill = F)+
+    theme_bw()
+  
+  if(nrow(inspos) > 0){
+    plot.list[[i]] <- plot.list[[i]]+
+      geom_point(mapping=aes_string(x=inspos$loc,y=0),shape=15)
+  }
+  if(nrow(delpos) > 0){
+    plot.list[[i]] <- plot.list[[i]]+
+      geom_point(mapping=aes_string(x=delpos$loc,y=0),shape=15,color="red")
+  }
+}
+
+
+
+pdf(paste0(OUTPUT.DIR,"/Fig1b_pt1.pdf"),
+    height=3,
+    width=20)
+plot_grid(plotlist = plot.list,nrow=2,ncol=1)
+dev.off()
+
+png(paste0(OUTPUT.DIR,"/Fig1b_pt1.png"),
+    height=3,
+    width=20,
+    units = "in",res=300)
+plot_grid(plotlist = plot.list,nrow=2,ncol=1)
+dev.off()
+
+plot_grid(plotlist = plot.list,nrow=2,ncol=1)
+```
+
+![image](/images/Fig_1b_pt1.png)

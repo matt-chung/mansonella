@@ -48,8 +48,7 @@
 
 For rerunning analyses, all paths in this section must be set by the user.
 
-## Software
-
+## Software    
 ```{bash, eval = F}
 PERL_BIN_DIR=/usr/local/packages/perl-5.24.0/bin
 PYTHON_LIB_DIR=/usr/local/packages/python-3.5.2/lib

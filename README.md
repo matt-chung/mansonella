@@ -4,9 +4,9 @@
   - [Software](#software)
   - [Directories](#directories)
 - [Assemble M. ozzardi mitogenome](#assemble-m-ozzardi-mitogenome)
-  - [Identify T8 long and short reads that map to M. ozzardi mitogenome](#identify-t8-long-and-short-reads-that-map-to-m-ozzardi-mitogenome)
+  - [Identify T6 and T8 long and short reads that map to M. ozzardi mitogenome](#identify-t6-and-t8-long-and-short-reads-that-map-to-m-ozzardi-mitogenome)
     - [Map T8 short reads to M. ozzardi mitogenome](#map-t8-short-reads-to-m-ozzardi-mitogenome)
-    - [Create a subset FASTQ containing T8 short reads that mapped to M. ozzardi mitogenome](#create-a-subset-fastq-containing-t8-short-reads-that-mapped-to-m-ozzardi-mitogenome)
+    - [Create a subset FASTQ containing T6 and T8 short reads that mapped to M. ozzardi mitogenome](#create-a-subset-fastq-containing-t6-and-t8-short-reads-that-mapped-to-m-ozzardi-mitogenome)
   - [Assemble T8 mitochondria using subset short read FASTQs that contain reads that mapped to M. ozzardi mitogenome](#assemble-t8-mitochondria-using-subset-short-read-fastqs-that-contain-reads-that-mapped-to-m-ozzardi-mitogenome)
   - [Rotate T8 assembly to M. ozzardi mitogenome](#rotate-t8-assembly-to-m-ozzardi-mitogenome)
     - [Run NUCMER on T8 assembly and M. ozzardi mitogenome](#run-nucmer-on-t8-assembly-and-m-ozzardi-mitogenome)
@@ -76,7 +76,7 @@ OUTPUT_DIR=/local/projects-t3/EBMAL/mchung_dir/mansonella/output
 
 # Assemble M. ozzardi mitogenome
 
-## Identify T8 long and short reads that map to M. ozzardi mitogenome
+## Identify T6 and T8 long and short reads that map to M. ozzardi mitogenome
 
 ### Map T8 short reads to M. ozzardi mitogenome
 
@@ -84,6 +84,12 @@ OUTPUT_DIR=/local/projects-t3/EBMAL/mchung_dir/mansonella/output
 ```{bash, eval = F}
 SEED_LENGTH=23
 THREADS=16
+
+## T6
+OUTPUT_PREFIX=T6_v_KX822021.1
+REF_FNA="$WORKING_DIR"/references/KX822021.1.fna
+FASTQ1=/local/projects/EMANS/T6/ILLUMINA_DATA/EMANS_20181012_K00134_IL100106386_S1_L001_R1_trimmed.fastq.gz
+FASTQ2=/local/projects/EMANS/T6/ILLUMINA_DATA/EMANS_20181012_K00134_IL100106386_S1_L001_R2_trimmed.fastq.gz
 
 ## T8
 OUTPUT_PREFIX=T8_v_KX822021.1
@@ -97,10 +103,18 @@ FASTQ2=/local/projects/EMANS/T8/ILLUMINA_DATA/EMANS_20180815_K00134_IL100106041_
 "$BWA_BIN_DIR"/bwa index "$REF_FNA"
 echo -e ""$BWA_BIN_DIR"/bwa mem -t "$THREADS" -k "$SEED_LENGTH" "$REF_FNA" "$FASTQ1" "$FASTQ2" | "$SAMTOOLS_BIN_DIR"/samtools view -bho "$WORKING_DIR"/assemblies/"$OUTPUT_PREFIX".bam -" | qsub -q threaded.q  -pe thread "$THREADS" -P jdhotopp-lab -l mem_free=5G -N bwa -wd "$WORKING_DIR"/assemblies/
 ```
-### Create a subset FASTQ containing T8 short reads that mapped to M. ozzardi mitogenome
+
+
+### Create a subset FASTQ containing T6 and T8 short reads that mapped to M. ozzardi mitogenome
 
 ##### Inputs:
 ```{bash, eval = F}
+## T6
+OUTPUT_PREFIX=T6_v_KX822021.1
+FASTQ1=/local/projects/EMANS/T6/ILLUMINA_DATA/EMANS_20181012_K00134_IL100106386_S1_L001_R1_trimmed.fastq.gz
+FASTQ2=/local/projects/EMANS/T6/ILLUMINA_DATA/EMANS_20181012_K00134_IL100106386_S1_L001_R2_trimmed.fastq.gz
+BAM="$WORKING_DIR"/assemblies/"$OUTPUT_PREFIX".bam
+
 ## T8
 OUTPUT_PREFIX=T8_v_KX822021.1
 FASTQ1=/local/projects/EMANS/T8/ILLUMINA_DATA/EMANS_20180815_K00134_IL100106041_S21_L005_R1_trimmed.fastq.gz
@@ -591,8 +605,6 @@ for(i in 1:length(plot.df)){
       geom_point(mapping=aes_string(x=delpos$loc,y=0),shape=15,color="red")
   }
 }
-
-
 
 pdf(paste0(OUTPUT.DIR,"/Fig1b_pt1.pdf"),
     height=3,

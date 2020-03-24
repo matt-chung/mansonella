@@ -11,9 +11,14 @@
   - [Rotate T8 assembly to M. ozzardi mitogenome](#rotate-t8-assembly-to-m-ozzardi-mitogenome)
     - [Run NUCMER on T8 assembly and M. ozzardi mitogenome](#run-nucmer-on-t8-assembly-and-m-ozzardi-mitogenome)
     - [Rotate T8 assembly from NUCMER coordinates](#rotate-t8-assembly-from-nucmer-coordinates)
+- [Annotate the M. ozzardi and M. perstans mitogenome](#annotate-the-m-ozzardi-and-m-perstans-mitogenome)
+  - [Use GeSeq to annotate the mitogenomes](#use-geseq-to-annotate-the-mitogenomes)
+  - [Move GESeq output to file system](#move-geseq-output-to-file-system)
 - [Compare synteny between the T8 and M. ozzardi mitogenomes using ACT](#compare-synteny-between-the-t8-and-m-ozzardi-mitogenomes-using-act)
-    - [Create coords file readable in ACT](#create-coords-file-readable-in-act)
-    - [Set file inputs for ACT](#set-file-inputs-for-act)
+  - [Create coords file readable in ACT](#create-coords-file-readable-in-act)
+  - [Format GESeq GFF3 files for ACT](#format-geseq-gff3-files-for-act)
+  - [Set file inputs for ACT](#set-file-inputs-for-act)
+  - [Export ACT instance](#export-act-instance)
 - [Construct a phylogenetic tree for the M. perstans and other nematode mitogenomes](#construct-a-phylogenetic-tree-for-the-m-perstans-and-other-nematode-mitogenomes)
   - [Prepare mitogenome reference files](#prepare-mitogenome-reference-files)
     - [Download nematode mitogenome references](#download-nematode-mitogenome-references)
@@ -53,6 +58,7 @@ For rerunning analyses, all paths in this section must be set by the user.
 PERL_BIN_DIR=/usr/local/packages/perl-5.24.0/bin
 PYTHON_LIB_DIR=/usr/local/packages/python-3.5.2/lib
 
+ACT_BIN_DIR=/local/aberdeen2rw/julie/Matt_dir/packages/artemis
 BWA_BIN_DIR=/usr/local/packages/bwa-0.7.17/bin
 EDIRECT_BIN_DIR=/usr/local/packages/edirect-9.19/
 GETORGANELLE_BIN_DIR=/local/aberdeen2rw/julie/Matt_dir/packages/GetOrganelle_v1.6.2e
@@ -103,7 +109,6 @@ FASTQ2=/local/projects/EMANS/T8/ILLUMINA_DATA/EMANS_20180815_K00134_IL100106041_
 "$BWA_BIN_DIR"/bwa index "$REF_FNA"
 echo -e ""$BWA_BIN_DIR"/bwa mem -t "$THREADS" -k "$SEED_LENGTH" "$REF_FNA" "$FASTQ1" "$FASTQ2" | "$SAMTOOLS_BIN_DIR"/samtools view -bho "$WORKING_DIR"/assemblies/"$OUTPUT_PREFIX".bam -" | qsub -q threaded.q  -pe thread "$THREADS" -P jdhotopp-lab -l mem_free=5G -N bwa -wd "$WORKING_DIR"/assemblies/
 ```
-
 
 ### Create a subset FASTQ containing T6 and T8 short reads that mapped to M. ozzardi mitogenome
 
@@ -184,9 +189,19 @@ rm "$WORKING_DIR"/final_assemblies/"$OUTPUT_PREFIX"_pt1.fasta
 rm "$WORKING_DIR"/final_assemblies/"$OUTPUT_PREFIX"_pt2.fasta
 ```
 
+# Annotate the M. ozzardi and M. perstans mitogenome
+
+## Use GeSeq to annotate the mitogenomes
+
+![image](/images/geseq_settings.png)
+
+## Move GESeq output to file system
+
+Unzipped job-results-20203684142 to "$WORKING_DIR"/geseq/job-results-20203684142
+
 # Compare synteny between the T8 and M. ozzardi mitogenomes using ACT
 
-### Create coords file readable in ACT
+## Create coords file readable in ACT
 
 ##### Inputs
 ```{bash, eval = F}
@@ -202,11 +217,39 @@ QUERY_FNA="$WORKING_DIR"/final_assemblies/getorganelle_T8.fasta
 perl ~/scripts/nucmer_coords2ACT_galaxy.pl "$WORKING_DIR"/nucmer/"$OUTPUT_PREFIX".coords "$WORKING_DIR"/nucmer/"$OUTPUT_PREFIX".tab
 ```
 
-### Set file inputs for ACT
+## Format GESeq GFF3 files for ACT
 
-##### Inputs:
+##### Inputs
+```{bash, eval = F}
+## T8
+GFF3="$WORKING_DIR"/geseq/job-results-20203684142/GeSeqJob-20200305-23934_164174_164176_163722_163582_163580_164124_156882_163258_164170_163684_164128_163726_163640_161910_162854_164116_158062_164154_156920_163106_164074_163638+%28circular%29:11327-13647_GFF3.gff3
 
-![image](/images/act_settings.png)
+## M. ozzardi
+GFF3="$WORKING_DIR"/geseq/job-results-20203684142/GeSeqJob-20200305-23934_KX822021.1-UNVERIFIED:-Mansonella-ozzardi-mitochondrion-sequence_GFF3.gff3
+```
+
+##### Commands
+```{bash, eval = F}
+awk '$2 == "ARWEN_v1.2.3" || $3 != "tRNA" {print $0}' "$GFF3" | awk '$3 == "CDS" || $3 == "rRNA" || $3 == "tRNA" {print $0}' > "$(echo "$GFF3" | sed "s/[.]gff3$/.act.gff3/g")"
+```
+
+## Set file inputs for ACT
+
+##### Commands
+```{bash, eval = F}
+"$ARTEMIS_BIN_DIR"/act
+```
+
+```{bash, eval = F}
+Sequence file 1: "$WORKING_DIR"/final_assemblies/getorganelle_T8.fasta
+Comparison file 1: "$WORKING_DIR"/nucmer/"$OUTPUT_PREFIX".tab
+Sequence file 2: "$WORKING_DIR"/references/KX822021.1.fna
+
+Annotation file 1: "$WORKING_DIR"/geseq/job-results-20203684142/GeSeqJob-20200305-23934_164174_164176_163722_163582_163580_164124_156882_163258_164170_163684_164128_163726_163640_161910_162854_164116_158062_164154_156920_163106_164074_163638+%28circular%29:11327-13647_GFF3.act.gff3
+Annotation file 2: "$WORKING_DIR"/geseq/job-results-20203684142/GeSeqJob-20200305-23934_KX822021.1-UNVERIFIED:-Mansonella-ozzardi-mitochondrion-sequence_GFF3.act.gff3
+```
+
+## Export ACT instance
 
 ![image](/images/act.png)
 
@@ -273,11 +316,12 @@ MSA_FNA="$REFERENCES_DIR"/mitogenome_combined.aligned.fna
 ```
 
 ## Visualize phylogenetic tree using iTOL
-##### Inputs
 
+Site: itol.embl.de  
 
-MSA_FNA="$REFERENCES_DIR"/mitogenome_combined.aligned.fna
+TREE_FILE: "$REFERENCES_DIR"/mitogenome_combined.aligned.fna.treefile
 
+![image](/images/itol.png)
 
 # Assess core sequence identity between M. perstans mitogenome and 15 other filarial mitogenomes
 

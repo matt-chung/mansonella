@@ -5,7 +5,7 @@
   - [Directories](#directories)
 - [Assemble M. ozzardi mitogenome](#assemble-m-ozzardi-mitogenome)
   - [Identify T6 and T8 long and short reads that map to M. ozzardi mitogenome](#identify-t6-and-t8-long-and-short-reads-that-map-to-m-ozzardi-mitogenome)
-    - [Map T8 short reads to M. ozzardi mitogenome](#map-t8-short-reads-to-m-ozzardi-mitogenome)
+    - [Map T6 and T8 short reads to M. ozzardi mitogenome](#map-t6-and-t8-short-reads-to-m-ozzardi-mitogenome)
     - [Create a subset FASTQ containing T6 and T8 short reads that mapped to M. ozzardi mitogenome](#create-a-subset-fastq-containing-t6-and-t8-short-reads-that-mapped-to-m-ozzardi-mitogenome)
   - [Assemble T8 mitochondria using subset short read FASTQs that contain reads that mapped to M. ozzardi mitogenome](#assemble-t8-mitochondria-using-subset-short-read-fastqs-that-contain-reads-that-mapped-to-m-ozzardi-mitogenome)
   - [Rotate T8 assembly to M. ozzardi mitogenome](#rotate-t8-assembly-to-m-ozzardi-mitogenome)
@@ -36,7 +36,7 @@
     - [Set heatmap rownames order and removes upper half of the triangle plot](#set-heatmap-rownames-order-and-removes-upper-half-of-the-triangle-plot)
     - [Plot sequence identity matrix as heatmap](#plot-sequence-identity-matrix-as-heatmap)
 - [Identify SNPs and indels in the M. perstans mitogenome](#identify-snps-and-indels-in-the-m-perstans-mitogenome)
-  - [Map T6 and T8 short reads to M. ozzardi mitogenome](#map-t6-and-t8-short-reads-to-m-ozzardi-mitogenome)
+  - [Map T6 and T8 short reads to M. ozzardi mitogenome](#map-t6-and-t8-short-reads-to-m-ozzardi-mitogenome-1)
   - [Sort and index BAM files](#sort-and-index-bam-files)
   - [Generate MPILEUPs for BAM files](#generate-mpileups-for-bam-files)
   - [Count SNPs and indels in the MPILEUPs](#count-snps-and-indels-in-the-mpileups)
@@ -45,6 +45,8 @@
     - [Load R functions and view sessionInfo](#load-r-functions-and-view-sessioninfo)
     - [Parse BASE files for plotting](#parse-base-files-for-plotting)
     - [Create depth plot with SNP and indel marks for each BASE file](#create-depth-plot-with-snp-and-indel-marks-for-each-base-file)
+- [Construct final figures](#construct-final-figures)
+  - [Figure 1](#figure-1)
 
 <!-- /MarkdownTOC -->
 
@@ -84,7 +86,7 @@ OUTPUT_DIR=/local/projects-t3/EBMAL/mchung_dir/mansonella/output
 
 ## Identify T6 and T8 long and short reads that map to M. ozzardi mitogenome
 
-### Map T8 short reads to M. ozzardi mitogenome
+### Map T6 and T8 short reads to M. ozzardi mitogenome
 
 ##### Inputs:
 ```{bash, eval = F}
@@ -666,4 +668,10 @@ dev.off()
 plot_grid(plotlist = plot.list,nrow=2,ncol=1)
 ```
 
-![image](/images/Fig_1b_pt1.png)
+![image](/images/Fig1b_pt1.png)
+
+# Construct final figures
+
+## Figure 1
+
+![image](/images/Fig1.png)

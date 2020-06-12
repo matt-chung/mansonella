@@ -22,6 +22,11 @@
   - [Format GESeq GFF3 files for ACT](#format-geseq-gff3-files-for-act)
   - [Set file inputs for ACT](#set-file-inputs-for-act)
   - [Export ACT instance](#export-act-instance)
+  - [Create mitogenome comparison gene plot between M. ozzardi, B. malayi, and different M. perstans annotations](#create-mitogenome-comparison-gene-plot-between-m-ozzardi-b-malayi-and-different-m-perstans-annotations)
+    - [Set R inputs](#set-r-inputs)
+    - [Load R packages and view sessionInfo](#load-r-packages-and-view-sessioninfo)
+    - [Parse and format inputs GFF and feature_table files](#parse-and-format-inputs-gff-and-feature_table-files)
+    - [Construct mitogenome comparison gene plot](#construct-mitogenome-comparison-gene-plot)
 - [Construct a phylogenetic tree for the M. perstans and other nematode mitogenomes](#construct-a-phylogenetic-tree-for-the-m-perstans-and-other-nematode-mitogenomes)
   - [Prepare mitogenome reference files](#prepare-mitogenome-reference-files)
     - [Download nematode mitogenome references](#download-nematode-mitogenome-references)
@@ -33,8 +38,8 @@
 - [Assess core sequence identity between M. perstans mitogenome and 15 other filarial mitogenomes](#assess-core-sequence-identity-between-m-perstans-mitogenome-and-15-other-filarial-mitogenomes)
   - [Use mothur to filter MAFFT alignment to only contain positions present in all 16 mitogenomes](#use-mothur-to-filter-mafft-alignment-to-only-contain-positions-present-in-all-16-mitogenomes)
   - [Visualize core mitogenome sequence identity](#visualize-core-mitogenome-sequence-identity)
-    - [Set R inputs](#set-r-inputs)
-    - [Load R packages and view sessionInfo](#load-r-packages-and-view-sessioninfo)
+    - [Set R inputs](#set-r-inputs-1)
+    - [Load R packages and view sessionInfo](#load-r-packages-and-view-sessioninfo-1)
     - [Construct core sequence identity matrix](#construct-core-sequence-identity-matrix)
     - [Set heatmap rownames order and removes upper half of the triangle plot](#set-heatmap-rownames-order-and-removes-upper-half-of-the-triangle-plot)
     - [Plot sequence identity matrix as heatmap](#plot-sequence-identity-matrix-as-heatmap)
@@ -44,7 +49,7 @@
   - [Generate MPILEUPs for BAM files](#generate-mpileups-for-bam-files)
   - [Count SNPs and indels in the MPILEUPs](#count-snps-and-indels-in-the-mpileups)
   - [Plot SNP and indel locations from T6 and T8 mapped against the T8 assembly](#plot-snp-and-indel-locations-from-t6-and-t8-mapped-against-the-t8-assembly)
-    - [Set R inputs](#set-r-inputs-1)
+    - [Set R inputs](#set-r-inputs-2)
     - [Load R functions and view sessionInfo](#load-r-functions-and-view-sessioninfo)
     - [Parse BASE files for plotting](#parse-base-files-for-plotting)
     - [Create depth plot with SNP and indel marks for each BASE file](#create-depth-plot-with-snp-and-indel-marks-for-each-base-file)
@@ -257,6 +262,182 @@ Annotation file 2: "$WORKING_DIR"/geseq/job-results-20203684142/GeSeqJob-2020030
 ## Export ACT instance
 
 ![image](/images/act.png)
+
+## Create mitogenome comparison gene plot between M. ozzardi, B. malayi, and different M. perstans annotations
+
+### Set R inputs
+
+```{R}
+OUTPUT.DIR <- "Z:EBMAL/mchung_dir/mansonella/plots"
+
+BMALAYI_GFF.PATH <- "Z:/EBMAL/mchung_dir/mansonella/references/NC_004298.1.gff3"
+MOZZARDI_GFF.PATH <- "Z:/EBMAL/mchung_dir/mansonella/references/KX822021.1.gff3"
+  
+MPERSTANS_GESEQ_GFF.PATH <- "Z:/EBMAL/mchung_dir/mansonella/geseq/job-results-20203684142/mitos.act.gff3"
+MPERSTANS_MITOS_GFF.PATH <- "Z:/EBMAL/mchung_dir/mansonella/gbk_sub/MITOS2/mperstans_MITOS.gff"
+  
+#MPERSTANS_FEATURETABLE.PATH <- "Z:/EBMAL/mchung_dir/mansonella/feature_table.txt"
+#MPERSTANS_FEATURETABLE.PATH <- "Z:/EBMAL/mchung_dir/mansonella/feature_table_edited_060120.txt"
+MPERSTANS_FEATURETABLE.PATH <- "Z:/EBMAL/mchung_dir/mansonella/gbk_sub/feature_table_FINAL.txt"
+```
+
+### Load R packages and view sessionInfo
+
+```{R}
+library("gggenes")
+library("ggplot2")
+library("ggrepel")
+
+sessionInfo()
+```
+
+```{R, eval = F}
+R version 4.0.0 (2020-04-24)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 18362)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.1252  LC_CTYPE=English_United States.1252   
+[3] LC_MONETARY=English_United States.1252 LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] ggrepel_0.8.2 ggplot2_3.3.0 gggenes_0.4.0
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.4.6     rstudioapi_0.11  knitr_1.28       magrittr_1.5     tidyselect_1.1.0 munsell_0.5.0   
+ [7] colorspace_1.4-1 R6_2.4.1         rlang_0.4.6      dplyr_0.8.5      tools_4.0.0      grid_4.0.0      
+[13] gtable_0.3.0     xfun_0.14        withr_2.2.0      ellipsis_0.3.1   assertthat_0.2.1 tibble_3.0.1    
+[19] lifecycle_0.2.0  crayon_1.3.4     purrr_0.3.4      vctrs_0.3.0      ggfittext_0.8.1  glue_1.4.1      
+[25] compiler_4.0.0   pillar_1.4.4     scales_1.1.1     pkgconfig_2.0.3 
+```
+
+### Parse and format inputs GFF and feature_table files
+
+```{R}
+bmalayi_gff <- read.delim(BMALAYI_GFF.PATH,header=F,comment.char="#")
+bmalayi_mitogenome_length <- 13657
+bmalayi_gff[,1] <- "B. malayi"
+bmalayi_gff[,4] <- as.numeric(as.character(bmalayi_gff[,4])) + 1895
+bmalayi_gff[,5] <- as.numeric(as.character(bmalayi_gff[,5])) + 1895
+
+bmalayi_gff[,4] <- apply(bmalayi_gff,1,function(x){ifelse(as.numeric(as.character(x[4])) > bmalayi_mitogenome_length, 
+                                                      as.numeric(as.character(x[4])) - bmalayi_mitogenome_length, 
+                                                      as.numeric(as.character(x[4])))})
+bmalayi_gff[,5] <- apply(bmalayi_gff,1,function(x){ifelse(as.numeric(as.character(x[5])) > bmalayi_mitogenome_length, 
+                                                      as.numeric(as.character(x[5])) - bmalayi_mitogenome_length, 
+                                                      as.numeric(as.character(x[5])))})
+
+for(i in 1:nrow(bmalayi_gff)){
+  if(as.numeric(as.character(bmalayi_gff[i,5])) < as.numeric(as.character(bmalayi_gff[i,4]))){
+    bmalayi_gff <- as.data.frame(rbind(bmalayi_gff,
+                                       bmalayi_gff[i,]))
+    bmalayi_gff[i,5] <- bmalayi_mitogenome_length
+    bmalayi_gff[nrow(bmalayi_gff),4] <- 1
+  } 
+}
+
+bmalayi_tRNA <- bmalayi_gff[bmalayi_gff[,3] == "tRNA",]
+bmalayi_rRNA <- bmalayi_gff[bmalayi_gff[,3] == "rRNA",]
+bmalayi_gene <- bmalayi_gff[bmalayi_gff[,3] == "gene",]
+
+
+
+mozzardi_gff <- read.delim(MOZZARDI_GFF.PATH,header=F,comment.char="#")
+mozzardi_gff[,1] <- "M. ozzardi"
+mozzardi_tRNA <- mozzardi_gff[mozzardi_gff[,3] == "tRNA",]
+mozzardi_rRNA <- mozzardi_gff[mozzardi_gff[,3] == "rRNA",]
+mozzardi_gene <- mozzardi_gff[mozzardi_gff[,3] == "gene" &
+                              !(grepl("RNA",mozzardi_gff[,9])),]
+
+mperstans_geseq_gff <- read.delim(MPERSTANS_GESEQ_GFF.PATH,header=F,comment.char="#")
+mperstans_geseq_gff[,1] <- "M. perstans GESeq"
+mperstans_geseq_tRNA <- mperstans_geseq_gff[mperstans_geseq_gff[,3] == "tRNA",]
+mperstans_geseq_rRNA <- mperstans_geseq_gff[mperstans_geseq_gff[,3] == "rRNA",]
+mperstans_geseq_gene <- mperstans_geseq_gff[mperstans_geseq_gff[,3] == "CDS",]
+
+mperstans_mitos_gff <- read.delim(MPERSTANS_MITOS_GFF.PATH,header=F,comment.char="#")
+mperstans_mitos_gff <- mperstans_mitos_gff[,1:9]
+mperstans_mitos_gff[,1] <- "M. perstans MITOS"
+mperstans_mitos_tRNA <- mperstans_mitos_gff[mperstans_mitos_gff[,3] == "tRNA",]
+mperstans_mitos_rRNA <- mperstans_mitos_gff[mperstans_mitos_gff[,3] == "rRNA",]
+mperstans_mitos_gene <- mperstans_mitos_gff[mperstans_mitos_gff[,3] == "gene",]
+
+mperstans_featuretable <- read.delim(MPERSTANS_FEATURETABLE.PATH,header=F,comment.char="#")
+mperstans_featuretable <- mperstans_featuretable[-1,]
+mperstans_featuretable[,2] <- gsub(">","",mperstans_featuretable[,2])
+mperstans_featuretable[mperstans_featuretable == ""] <- NA
+mperstans_featuretable_gff <- as.data.frame(matrix(nrow=length(which(mperstans_featuretable[,1] != "")),
+                                                   ncol=9))
+mperstans_featuretable_gff[,1] <- "M. perstans featuretable"
+mperstans_featuretable_gff[,3] <- mperstans_featuretable[!(is.na(mperstans_featuretable[,3])),3]
+mperstans_featuretable_gff[,4] <- mperstans_featuretable[!(is.na(mperstans_featuretable[,1])),1]
+mperstans_featuretable_gff[,5] <- mperstans_featuretable[!(is.na(mperstans_featuretable[,2])),2]
+mperstans_featuretable_gff[,9] <- mperstans_featuretable[!(is.na(mperstans_featuretable[,5])) &
+                                                           mperstans_featuretable[,4] != "transl_table" &
+                                                           mperstans_featuretable[,4] != "note" &
+                                                           mperstans_featuretable[,4] != "transl_except",5]
+mperstans_featuretable_tRNA <- mperstans_featuretable_gff[mperstans_featuretable_gff[,3] == "tRNA",]
+mperstans_featuretable_rRNA <- mperstans_featuretable_gff[mperstans_featuretable_gff[,3] == "rRNA",]
+mperstans_featuretable_gene <- mperstans_featuretable_gff[mperstans_featuretable_gff[,3] == "CDS",]
+
+```
+
+### Construct mitogenome comparison gene plot
+
+```{R,fig.height=4,fig.width=15}
+plot.gff <- as.data.frame(rbind(bmalayi_tRNA,bmalayi_rRNA,bmalayi_gene,
+                                mozzardi_tRNA,mozzardi_rRNA,mozzardi_gene,
+                                mperstans_geseq_tRNA,mperstans_geseq_rRNA,mperstans_geseq_gene,
+                                mperstans_mitos_tRNA,mperstans_mitos_rRNA,mperstans_mitos_gene,
+                                mperstans_featuretable_tRNA,mperstans_featuretable_rRNA,mperstans_featuretable_gene))
+plot.gff[,3] <- gsub("gene","CDS",plot.gff[,3])
+
+gene.plot <- ggplot()+
+  geom_gene_arrow(mapping=aes(xmin=as.numeric(as.character(plot.gff[,4])),
+                              xmax=as.numeric(as.character(plot.gff[,5])),
+                              y=plot.gff[,1],
+                              fill=plot.gff[,3]))+
+  geom_text_repel(mapping=aes(x=(as.numeric(as.character(mperstans_featuretable_gene[,5]))+as.numeric(as.character(mperstans_featuretable_gene[,4])))/2,
+                               y=mperstans_featuretable_gene[,1],
+                               label=mperstans_featuretable_gene[,9]
+                              ),
+                  size=3,
+                  nudge_y= 0.5)+
+  geom_text_repel(mapping=aes(x=(as.numeric(as.character(mperstans_featuretable_rRNA[,5]))+as.numeric(as.character(mperstans_featuretable_rRNA[,4])))/2,
+                               y=mperstans_featuretable_rRNA[,1],
+                               label=mperstans_featuretable_rRNA[,9]
+                              ),
+                  size=3,
+                  nudge_y= 0.5)+
+  guides(fill = F)+
+  scale_x_continuous(expand=c(0,0))+
+  theme_genes()+
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank())
+
+pdf(paste0(OUTPUT.DIR,"/Fig1a_pt2.pdf"),
+    height=4,
+    width=15)
+print(gene.plot)
+dev.off()
+
+png(paste0(OUTPUT.DIR,"/Fig1a_pt2.png"),
+    height=4,
+    width=15,
+    units = "in",res=300)
+print(gene.plot)
+dev.off()
+
+print(gene.plot)
+```
+
+![image](/images/Fig1a_pt2.png)
 
 # Construct a phylogenetic tree for the M. perstans and other nematode mitogenomes
 
